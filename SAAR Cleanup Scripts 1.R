@@ -2,67 +2,67 @@
 set.colClass.1<-c(rep("character", 2), rep("integer", 13) )
 
 #read KDE data
-SAAR1999<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR1999.csv", skip=6, nrow=176,
+SAAR1999<-read.csv("~/Github/SAAR_Data/data sets/SAAR1999.csv", skip=6, nrow=176,
                    header=TRUE, fill=TRUE, blank.lines.skip=TRUE,
                    strip.white=TRUE, colClasses=c("character", rep("integer", 13)))
 
-SAAR2000<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2000.csv", skip=6, nrow=176, 
+SAAR2000<-read.csv("~/Github/SAAR_Data/data sets/SAAR2000.csv", skip=6, nrow=176, 
                    header=TRUE, fill=TRUE, blank.lines.skip=TRUE,
                    strip.white=TRUE, colClasses=c("character", rep("integer", 13)))
 
-SAAR2001<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2001.csv", skip=6, nrow=176, 
+SAAR2001<-read.csv("~/Github/SAAR_Data/data sets/SAAR2001.csv", skip=6, nrow=176, 
                    header=TRUE, fill=TRUE, blank.lines.skip=TRUE,
                    strip.white=TRUE, colClasses=c("character", rep("integer", 13)))
 
-SAAR2002<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2002.csv", skip=6, nrow=176, 
+SAAR2002<-read.csv("~/Github/SAAR_Data/data sets/SAAR2002.csv", skip=6, nrow=176, 
                    header=TRUE, fill=TRUE, blank.lines.skip=TRUE,
                    strip.white=TRUE, colClasses=c("character", rep("integer", 13)))
 
-SAAR2003<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2003.csv", skip=6, nrow=176, 
+SAAR2003<-read.csv("~/Github/SAAR_Data/data sets/SAAR2003.csv", skip=6, nrow=176, 
                    header=TRUE, fill=TRUE, blank.lines.skip=TRUE,
                    strip.white=TRUE, colClasses=c("character", rep("integer", 13)))
 
-SAAR2004<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2004.csv", header=TRUE, sep=",", 
+SAAR2004<-read.csv("~/Github/SAAR_Data/data sets/SAAR2004.csv", header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                      colClasses=c("numeric", "character", rep("integer", 13)), 
                      strip.white=TRUE, nrow=351)
 
-SAAR2005<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2005.csv", header=TRUE, sep=",", 
+SAAR2005<-read.csv("~/Github/SAAR_Data/data sets/SAAR2005.csv", header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", rep("integer", 13)), 
                    strip.white=TRUE, nrow=176)
 
-SAAR2006<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2006.csv", header=TRUE, sep=",", 
+SAAR2006<-read.csv("~/Github/SAAR_Data/data sets/SAAR2006.csv", header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 13)), 
                    strip.white=TRUE)
 
-SAAR2007<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2007.csv", header=TRUE, sep=",", 
+SAAR2007<-read.csv("~/Github/SAAR_Data/data sets/SAAR2007.csv", header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 13)), 
                    strip.white=TRUE)
 
-SAAR2008<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2008.csv", header=TRUE, sep=",", 
+SAAR2008<-read.csv("~/Github/SAAR_Data/data sets/SAAR2008.csv", header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
 
-SAAR2009<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2009.csv", header=TRUE, sep=",", 
+SAAR2009<-read.csv("~/Github/SAAR_Data/data sets/SAAR2009.csv", header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
 
-SAAR2010<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2010.csv", header=TRUE, sep=",", 
+SAAR2010<-read.csv("~/Github/SAAR_Data/data sets/SAAR2010.csv", header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
 
-SAAR2011<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2011.csv", header=TRUE, sep=",", 
+SAAR2011<-read.csv("~/Github/SAAR_Data/data sets/SAAR2011.csv", header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
 
-SAAR2012<-read.csv("~/Desktop/SAAR_Data/data sets/SAAR2012.csv", header=TRUE, sep=",", 
+SAAR2012<-read.csv("~/Github/SAAR_Data/data sets/SAAR2012.csv", header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
@@ -313,92 +313,15 @@ SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2012[, c(grep("DISTRICT", names(SAAR20
 
 #name columns
 a<-c("GR8E", "GR9E", "GR12E")
-names(SAAR.1999.2012)<-c("DISTRICT",paste(rep(1999:2012, each=3), a, sep="."))
+names(SAAR.1999.2012) <- c("DISTRICT",paste(rep(1999:2012, each=3), a, sep="."))
 rm(a)
 
+
+#Save R object
+write.table(SAAR.1999.2012, file = "SAAR.1999.2012.csv", sep = ",")
+
 # remove SAAR spreadsheets
-rm( SAAR1999, SAAR2000, SAAR2001, SAAR2002, SAAR2003, SAAR2004, SAAR2005, SAAR2006, SAAR2007, SAAR2008,
-    SAAR2009, SAAR2010, SAAR2011, SAAR2012, set.colClass.1, i, temp)
-
-#enrollments by grade
-Eighth.GE<-SAAR.1999.2012[, c(1, grep("GR8E$", names(SAAR.1999.2012)))]
-Ninth.GE<-SAAR.1999.2012[, c(1, grep("GR9E$", names(SAAR.1999.2012)))]
-Twelth.GE<-SAAR.1999.2012[, c(1, grep("GR12E$", names(SAAR.1999.2012)))]
-
-#Create Ratios for 8 & 9 grade
-Cohort.8G<-Twelth.GE[,7:15]/Eighth.GE[,2:10]
-Cohort.9G<-Twelth.GE[6:15]/Ninth.GE[2:11]
-
-#bind district to 8 Gr cohorts
-Cohort.8G<-cbind(Eighth.GE[,1], Cohort.8G)
-a<-names(Cohort.8G)
-a[1]<-"DISTRICT"
-a<-sub("GR12E", "Gr8Cohort", a)
-names(Cohort.8G)<-a
-
-#bind district to 9Gr cohort
-Cohort.9G<-cbind(Ninth.GE[,1], Cohort.9G)
-a<-names(Cohort.9G)
-a<-sub("GR12E", "9GrCohort", a)
-a[1]<-"DISTRICT"
-names(Cohort.9G)<-a
+rm(list = ls())
 
 
-#compute state wide averages for cohorts
-All.Schools.Avg.8GC<-sapply(Cohort.8G[, 2:10], mean)
-All.Schools.Avg.9GC<-sapply(Cohort.9G[-grep("NaN", Cohort.9G[,2]),2:11], mean)
-
-
-#import U.S. Census Bureau on School District Poverty Rates
-#http://www.census.gov/did/www/saipe/data/statecounty/data/index.html
-poverty<-read.csv("ussd11.csv", skip=2, header=TRUE, 
-                            fill=TRUE, blank.lines.skip=TRUE,
-                            strip.white=TRUE, as.is=TRUE)
-
-Ky.poverty<-poverty[poverty$State.Postal.Code=="KY",]
-Ky.percent.children.in.poverty.5.to.17.in.2011<-Ky.poverty[,7]/Ky.poverty[,6]
-Ky.poverty<-cbind(Ky.poverty$Name, Ky.percent.children.in.poverty.5.to.17.in.2011)
-Ky.poverty<-as.data.frame(Ky.poverty)
-
-
-#bind Cohort 8, 9 and poverty indicator
-SAAR.Cohorts<-cbind(Cohort.8G, Cohort.9G[2:11])
-setdiff(SAAR.Cohorts[,1], Ky.poverty[,1])
-setdiff(SAAR.Cohorts[,1], Ky.poverty[,1])
-a<-Ky.poverty[,1]
-a<-as.character(a)
-a<-sub(" School District","", a)
-a<-sub("Larue County", "LaRue County", a)
-a<-sub("Walton-Verona Independent", "Walton Verona Independent", a)
-a<-sub("Raceland-Worthington Independent", "Raceland Independent", a)
-setdiff(SAAR.Cohorts[,1], a)
-setdiff(a, SAAR.Cohorts[,1])
-Ky.poverty[,1]<-a
-a<-names(Ky.poverty)
-a[1]<-"DISTRICT"
-names(Ky.poverty)<-a
-
-#merge poverty with SAAR Cohorts
-SAAR.Cohorts<-merge(SAAR.Cohorts, Ky.poverty, by="DISTRICT")
-
-#new categorical variable--D1 through D10 for child poverty rates
-a<-SAAR.Cohorts[,21]
-a<-as.numeric(a)
-b<-cut(a,10)
-levels(b)<-c(paste("D", 1:10, sep=""))
-
-#bind categorical "b" to SAAR Cohorts
-SAAR.Cohorts<-cbind(SAAR.Cohorts, b)
-a<-names(SAAR.Cohorts)
-a[22]<-"poverty.decile"
-names(SAAR.Cohorts)<-a
-
-#exploratory summaries based on deciles of poverty
-D1<-subset(SAAR.Cohorts, SAAR.Cohorts$poverty.decile=="D1")
-D1.Poverty.8th.Grade.Cohort<-colMeans(D1[,2:10], na.rm=TRUE)
-D1.Poverty.9th.Grade.Cohort<-colMeans(D1[,11:20], na.rm=TRUE)
-
-D10<-subset(SAAR.Cohorts, SAAR.Cohorts$poverty.decile=="D10")
-D10.Poverty.8th.Grade.Cohort<-colMeans(D10[,2:10], na.rm=TRUE)
-D10.Poverty.9th.Grade.Cohort<-colMeans(D10[,11:20], na.rm=TRUE)
 
