@@ -1,0 +1,11 @@
+Load the  AFGR, SAAR, and ELSI data into one data frame.
+
+Do computations and remake data frame using the principles of Tidy data.
+
+Column 1 = School Districts
+Column 2 = Year
+Column 3 = Total Enrollments
+Column 4 = FRL <- Total FRL / Total Enrollments
+Column 5 = 8GC.KDE <- Diploma Recipients / 8GrE.SAAR
+
+etc.  That should be enough to load the gapminder in google.
