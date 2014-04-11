@@ -1,68 +1,68 @@
 #set colClasses
 set.colClass.1<-c(rep("character", 2), rep("integer", 13) )
-
+wd <- getwd()
 #read KDE data
-SAAR1999<-read.csv("~/Github/SAAR_Data/data sets/SAAR1999.csv", skip=6, nrow=176,
+SAAR1999<-read.csv(paste (wd ,"/data sets/SAAR1999.csv", sep = ""), skip=6, nrow=176,
                    header=TRUE, fill=TRUE, blank.lines.skip=TRUE,
                    strip.white=TRUE, colClasses=c("character", rep("integer", 13)))
 
-SAAR2000<-read.csv("~/Github/SAAR_Data/data sets/SAAR2000.csv", skip=6, nrow=176, 
+SAAR2000<-read.csv(paste (wd ,"/data sets/SAAR2000.csv", sep = ""), skip=6, nrow=176, 
                    header=TRUE, fill=TRUE, blank.lines.skip=TRUE,
                    strip.white=TRUE, colClasses=c("character", rep("integer", 13)))
 
-SAAR2001<-read.csv("~/Github/SAAR_Data/data sets/SAAR2001.csv", skip=6, nrow=176, 
+SAAR2001<-read.csv(paste (wd ,"/data sets/SAAR2001.csv", sep = ""), skip=6, nrow=176, 
                    header=TRUE, fill=TRUE, blank.lines.skip=TRUE,
                    strip.white=TRUE, colClasses=c("character", rep("integer", 13)))
 
-SAAR2002<-read.csv("~/Github/SAAR_Data/data sets/SAAR2002.csv", skip=6, nrow=176, 
+SAAR2002<-read.csv(paste (wd ,"/data sets/SAAR2002.csv", sep = ""), skip=6, nrow=176, 
                    header=TRUE, fill=TRUE, blank.lines.skip=TRUE,
                    strip.white=TRUE, colClasses=c("character", rep("integer", 13)))
 
-SAAR2003<-read.csv("~/Github/SAAR_Data/data sets/SAAR2003.csv", skip=6, nrow=176, 
+SAAR2003<-read.csv(paste (wd ,"/data sets/SAAR2003.csv", sep = ""), skip=6, nrow=176, 
                    header=TRUE, fill=TRUE, blank.lines.skip=TRUE,
                    strip.white=TRUE, colClasses=c("character", rep("integer", 13)))
 
-SAAR2004<-read.csv("~/Github/SAAR_Data/data sets/SAAR2004.csv", header=TRUE, sep=",", 
+SAAR2004<-read.csv(paste (wd ,"/data sets/SAAR2004.csv", sep = ""), header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                      colClasses=c("numeric", "character", rep("integer", 13)), 
                      strip.white=TRUE, nrow=351)
 
-SAAR2005<-read.csv("~/Github/SAAR_Data/data sets/SAAR2005.csv", header=TRUE, sep=",", 
+SAAR2005<-read.csv(paste (wd ,"/data sets/SAAR2005.csv", sep = ""), header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", rep("integer", 13)), 
                    strip.white=TRUE, nrow=176)
 
-SAAR2006<-read.csv("~/Github/SAAR_Data/data sets/SAAR2006.csv", header=TRUE, sep=",", 
+SAAR2006<-read.csv(paste (wd ,"/data sets/SAAR2006.csv", sep = ""), header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 13)), 
                    strip.white=TRUE)
 
-SAAR2007<-read.csv("~/Github/SAAR_Data/data sets/SAAR2007.csv", header=TRUE, sep=",", 
+SAAR2007<-read.csv(paste (wd ,"/data sets/SAAR2007.csv", sep = ""), header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 13)), 
                    strip.white=TRUE)
 
-SAAR2008<-read.csv("~/Github/SAAR_Data/data sets/SAAR2008.csv", header=TRUE, sep=",", 
+SAAR2008<-read.csv(paste (wd ,"/data sets/SAAR2008.csv", sep = ""), header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
 
-SAAR2009<-read.csv("~/Github/SAAR_Data/data sets/SAAR2009.csv", header=TRUE, sep=",", 
+SAAR2009<-read.csv(paste (wd ,"/data sets/SAAR2009.csv", sep = ""), header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
 
-SAAR2010<-read.csv("~/Github/SAAR_Data/data sets/SAAR2010.csv", header=TRUE, sep=",", 
+SAAR2010<-read.csv(paste (wd ,"/data sets/SAAR2010.csv", sep = ""), header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
 
-SAAR2011<-read.csv("~/Github/SAAR_Data/data sets/SAAR2011.csv", header=TRUE, sep=",", 
+SAAR2011<-read.csv(paste (wd ,"/data sets/SAAR2011.csv", sep = ""), header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
 
-SAAR2012<-read.csv("~/Github/SAAR_Data/data sets/SAAR2012.csv", header=TRUE, sep=",", 
+SAAR2012<-read.csv(paste (wd ,"/data sets/SAAR2012.csv", sep = ""), header=TRUE, sep=",", 
                    blank.lines.skip=TRUE, fill=TRUE, skip=6,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
