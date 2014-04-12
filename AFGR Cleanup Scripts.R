@@ -1,6 +1,7 @@
 saar <- read.table("SAAR.1999.2012.csv", header = TRUE, sep = ",")
 
-AFGR <- read.csv(file = "AFGR_2012.csv", 
+wd <- getwd()
+AFGR <- read.csv(file = paste (wd, "data sets", "AFGR_2012.csv", sep = "/"), 
                  sep = ",", 
                  header = TRUE,
                  strip.white = TRUE,
@@ -48,8 +49,9 @@ afgr.08.12 <- merge(afgr.08.12, DR.12, by = "DISTRICT")
 afgr.08.12 <- afgr.08.12[, c(1,3,5,7,9,11)]
 names(afgr.08.12)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2008:2012, "KDE", sep = ".")
 
-#save for later combination
-write.table(afgr.08.12, file = "afgr.08.12.csv", sep = ",")
+#Save as R object to load in later script
+afgr.new <- paste (wd, "objects", "afgr.08.12.csv")
+write.table (afgr.08.12, file = afgr.new, sep = ",")
 
 #clear workspace
 rm (list = ls())

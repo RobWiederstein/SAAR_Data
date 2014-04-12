@@ -1,3 +1,5 @@
+Add second poverty indicator--child poverty rate--from Annie E. Casey Foundation.
+
 Load the  AFGR, SAAR, and ELSI data into one data frame.
 
 Do computations and remake data frame using the principles of Tidy data.

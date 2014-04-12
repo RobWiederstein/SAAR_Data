@@ -33,8 +33,8 @@ index <- as.data.frame (index)
 names(index)[1] <- "DISTRICT"
 elsi <- merge (index, elsi, by = "DISTRICT")
 
-#Write new data file
-elsi.new <- paste(wd, "data sets", "elsi_new.csv", sep = "/")
+#Save as R object to load in later script
+elsi.new <- paste(wd, "objects", "elsi_new.csv", sep = "/")
 write.table (elsi, file = elsi.new, sep = ",")
 
 #cleanup

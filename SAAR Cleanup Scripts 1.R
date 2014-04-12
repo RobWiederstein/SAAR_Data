@@ -345,10 +345,11 @@ names(SAAR.1999.2012) <- c("DISTRICT", paste(a, rep(1999:2012, each=4), "KDE", s
 rm(a)
 
 
-#Save R object
-write.table(SAAR.1999.2012, file = "SAAR.1999.2012.csv", sep = ",")
+#Save as R object to load in later script
+saar.new <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+write.table (SAAR.1999.2012, file = saar.new, sep = ",")
 
-# remove SAAR spreadsheets
+#cleanup
 rm(list = ls())
 
 
