@@ -50,7 +50,7 @@ afgr.08.12 <- afgr.08.12[, c(1,3,5,7,9,11)]
 names(afgr.08.12)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2008:2012, "KDE", sep = ".")
 
 #Save as R object to load in later script
-afgr.new <- paste (wd, "objects", "afgr.08.12.csv")
+afgr.new <- paste (wd, "objects", "afgr.08.12.csv", sep = "/")
 write.table (afgr.08.12, file = afgr.new, sep = ",")
 
 #clear workspace
