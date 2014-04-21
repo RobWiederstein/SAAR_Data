@@ -44,8 +44,8 @@ Tot.Enrollment.elsi <- rep (NA, 169)
 FRD.Lunch.Pct <- rep (NA, 169)
 FRD.Decile <- rep (NA, 169)
 Child.Poverty.Pct <- cp$cp.2012.AEC
-Poverty.Decile <- cut_interval(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- paste ("D", 1:10, sep = "")
+Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
+levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2012.KDE /
                     saar$GR8E.2007.KDE
 Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2012.KDE /
@@ -74,11 +74,11 @@ Tot.Enrollment.saar <- saar$TOTAL.2011.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2011.12
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2011.12) / 
                   as.integer (elsi$Total.Students..UG.PK.12...District..2011.12)
-FRD.Decile <- cut_interval (FRD.Lunch.Pct, n= 10)
-levels (FRD.Decile) <- paste ("D", 1:10, sep = "")
+FRD.Decile <- cut_number (FRD.Lunch.Pct, n= 10)
+levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Child.Poverty.Pct <- cp$cp.2011.AEC
-Poverty.Decile <- cut_interval(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- paste ("D", 1:10, sep = "")
+Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
+levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2011.KDE / 
                     saar$GR8E.2006.KDE
 Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2011.KDE / 
@@ -107,11 +107,11 @@ Tot.Enrollment.saar <- saar$TOTAL.2010.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2010.11
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2010.11) / 
                   as.integer (elsi$Total.Students..UG.PK.12...District..2010.11)
-FRD.Decile <- cut_interval (FRD.Lunch.Pct, n = 10)
-levels (FRD.Decile) <- paste ("D", 1:10, sep = "")
+FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
+levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Child.Poverty.Pct <- cp$cp.2010.AEC
-Poverty.Decile <- cut_interval(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- paste ("D", 1:10, sep = "")
+Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
+levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2010.KDE / 
                     saar$GR8E.2005.KDE
 Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2010.KDE / 
@@ -140,11 +140,11 @@ Tot.Enrollment.saar <- saar$TOTAL.2009.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2009.10
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2009.10) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2009.10)
-FRD.Decile <- cut_interval (FRD.Lunch.Pct, n = 10)
-levels (FRD.Decile) <- paste ("D", 1:10, sep = "")
+FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
+levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Child.Poverty.Pct <- cp$cp.2009.AEC
-Poverty.Decile <- cut_interval(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- paste ("D", 1:10, sep = "")
+Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
+levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2009.KDE / 
      saar$GR8E.2004.KDE
 Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2009.KDE / 
@@ -171,11 +171,11 @@ Tot.Enrollment.saar <- saar$TOTAL.2008.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2008.09
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2008.09) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2008.09)
-FRD.Decile <- cut_interval (FRD.Lunch.Pct, n = 10)
-levels (FRD.Decile) <- paste ("D", 1:10, sep = "")
+FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
+levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Child.Poverty.Pct <- cp$cp.2008.AEC
-Poverty.Decile <- cut_interval(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- paste ("D", 1:10, sep = "")
+Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
+levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2008.KDE / 
      saar$GR8E.2003.KDE
 Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2008.KDE / 
@@ -202,11 +202,11 @@ Tot.Enrollment.saar <- saar$TOTAL.2007.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2007.08
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2007.08) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2007.08)
-FRD.Decile <- cut_interval (FRD.Lunch.Pct, n = 10)
-levels (FRD.Decile) <- paste ("D", 1:10, sep = "")
+FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
+levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Child.Poverty.Pct <- cp$cp.2007.AEC
-Poverty.Decile <- cut_interval(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- paste ("D", 1:10, sep = "")
+Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
+levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- as.integer (gr$GRADS_4YR_07) / saar$GR8E.2002.KDE 
 Gr.9.Cohort.KDE <- as.integer (gr$GRADS_4YR_07) / saar$GR9E.2003.KDE
 Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2007.KDE / saar$GR8E.2002.KDE
@@ -233,11 +233,11 @@ Tot.Enrollment.saar <- saar$TOTAL.2006.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2006.07
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2006.07) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2006.07)
-FRD.Decile <- cut_interval (FRD.Lunch.Pct, n = 10)
-levels (FRD.Decile) <- paste ("D", 1:10, sep = "")
+FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
+levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Child.Poverty.Pct <- cp$cp.2006.AEC
-Poverty.Decile <- cut_interval(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- paste ("D", 1:10, sep = "")
+Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
+levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- as.integer (gr$GRADS_4YR_06) / saar$GR8E.2001.KDE 
 Gr.9.Cohort.KDE <- as.integer (gr$GRADS_4YR_06) / saar$GR9E.2002.KDE
 Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2006.KDE / saar$GR8E.2001.KDE
@@ -264,11 +264,11 @@ Tot.Enrollment.saar <- saar$TOTAL.2005.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2005.06
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2005.06) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2005.06)
-FRD.Decile <- cut_interval (FRD.Lunch.Pct, n = 10)
-levels (FRD.Decile) <- paste ("D", 1:10, sep = "")
+FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
+levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Child.Poverty.Pct <- cp$cp.2005.AEC
-Poverty.Decile <- cut_interval(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- paste ("D", 1:10, sep = "")
+Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
+levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- as.integer (gr$GRADS_4YR_05) / saar$GR8E.2000.KDE 
 Gr.9.Cohort.KDE <- as.integer (gr$GRADS_4YR_05) / saar$GR9E.2001.KDE
 Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2005.KDE / saar$GR8E.2000.KDE
@@ -295,11 +295,11 @@ Tot.Enrollment.saar <- saar$TOTAL.2004.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2004.05
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2005.06) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2005.06) ##wrong years!! Data imputation?
-FRD.Decile <- cut_interval (FRD.Lunch.Pct, n = 10)
-levels (FRD.Decile) <- paste ("D", 1:10, sep = "")
+FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
+levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Child.Poverty.Pct <- cp$cp.2004.AEC
-Poverty.Decile <- cut_interval(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- paste ("D", 1:10, sep = "")
+Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
+levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- as.integer (gr$GRADS_4YR_04) / saar$GR8E.1999.KDE 
 Gr.9.Cohort.KDE <- as.integer (gr$GRADS_4YR_04) / saar$GR9E.2000.KDE
 Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2004.KDE / saar$GR8E.1999.KDE
@@ -326,11 +326,11 @@ Tot.Enrollment.saar <- saar$TOTAL.2003.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2003.04
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2005.06) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2005.06) ##wrong years!! Data imputation?
-FRD.Decile <- cut_interval (FRD.Lunch.Pct, n = 10)
-levels (FRD.Decile) <- paste ("D", 1:10, sep = "")
+FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
+levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Child.Poverty.Pct <- cp$cp.2003.AEC
-Poverty.Decile <- cut_interval(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- paste ("D", 1:10, sep = "")
+Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
+levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- rep (NA, 169) #no saar$GR8E.1998 
 Gr.9.Cohort.KDE <- as.integer (gr$GRADS_4YR_03) / saar$GR9E.1999.KDE
 Gr.12.Gr.8.ratio.KDE <- rep (NA, 169) #no saar$GR8E.1998
