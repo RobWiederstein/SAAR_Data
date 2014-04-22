@@ -4,10 +4,13 @@ library ("ggplot2")
 #Figures
 wd <- getwd()
 file <- paste (wd, "objects", "cum.2003.2012.csv", sep = "/")
-cum <- read.csv (file, sep = ",", header = TRUE)
+cum <- read.csv (file, sep = ",", header = T, as.is = T)
+file <- paste (wd, "objects", "State.grad.rate.2003.2012.KDE.csv", sep = "/")
+ky <- read.csv (file, sep = ",", header = T, as.is = T)
 
-#set columns to factor
-cum$Year <- as.factor (cum$Year)
+#set years to "Date" format
+cum$Year <- as.Date (as.character (cum$Year), "%Y")
+ky$Year <- as.Date (ky$Year)
 
 #set up 1st and 10th deciles for comparisons
 FRD.D01 <- subset (cum, cum$FRD.Decile == "D01")
@@ -66,21 +69,28 @@ p <- p + layer (geom = "point")
 p1 <- ggplot (table, aes (x = Year, y= Gr.8.Cohort.by.year))
 table$Year <- as.Date (as.character (table$Year), "%Y")
 p1 <- p1 + layer (geom = "line", colour = "red")
-p1 <- p1 + ylim (c(.5, 1))
+p1 <- p1 + ylim (c(.6, 1))
 p1 <- p1 + xlab("") + ylab("Pct.") + ggtitle("Eighth Grade Cohort")
 p1 <- p1 + geom_line (aes(Year, Gr.8.Cohort.FRD.D10))
 p1 <- p1 + geom_line (aes (Year, Gr.8.Cohort.FRD.D01))
 
 p2 <- ggplot (table, aes (x = Year, y= Gr.9.Cohort.by.year))
 p2 <- p2 + layer (geom = "line", colour = "red")
-p2 <- p2 + ylim (c(.5, 1))
+p2 <- p2 + ylim (c(.6, 1))
 p2 <- p2 + xlab("") + ylab("Pct.") + ggtitle("Ninth Grade Cohort")
 p2 <- p2 + geom_line (aes(Year, Gr.9.Cohort.FRD.D10))
 p2 <- p2 + geom_line (aes (Year, Gr.9.Cohort.FRD.D01))
 
 p3 <- ggplot (table, aes (x = Year, y= Gr.9.Cohort.by.year))
 p3 <- p3 + layer (geom = "line", colour = "red")
-p3 <- p3 + ylim (c(.5, 1))
+p3 <- p3 + ylim (c(.6, 1))
 p3 <- p3 + xlab("") + ylab("Pct.") + ggtitle("Eighth vs.Ninth \n Grade Cohort")
 p3 <- p3 + geom_line (aes(Year, Gr.8.Cohort.by.year ))
+
+p4 <- ggplot (table, aes (x = Year, y= Gr.8.Cohort.by.year))
+table$Year <- as.Date (as.character (table$Year), "%Y")
+p4 <- p4 + layer (geom = "line", colour = "red")
+p4 <- p4 + ylim (c(.6, 1))
+p4 <- p4 + xlab("") + ylab("Pct.") + ggtitle("Eighth Grade Cohort vs. State Reported")
+p4 <- p4 + geom_line (aes(ky$Year, ky$Reported))
 

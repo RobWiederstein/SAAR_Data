@@ -14,6 +14,8 @@ cp <- read.csv (paste (wd, "objects", "tot.cp.2001.2012.csv", sep = "/" ),
                   sep = ",", header = T, as.is = TRUE)
 gr <- read.csv (paste (wd, "objects", "gr.2003.2007.csv", sep = "/" ),
                 sep = ",", header = T, as.is = TRUE)
+frd <- read.csv (paste (wd, "objects", "FRD.Lunch.Pct.2012.KDE.csv", sep = "/" ),
+                 sep = ",", header = T, as.is = TRUE)
 
 #really small schools with 8 grade enrollment, but no 12th grade
 #probably why they are missing on the afgr data
@@ -34,6 +36,9 @@ gr <- gr[, -1]
 names (gr)[1] <- "DISTRICT"
 gr[161,1] <- "Walton Verona Independent" #eliminate hyphen
 gr <- merge (index, gr)
+frd$DISTRICT <- sub ("Raceland-Worthington Independent", "Raceland Independent", frd$DISTRICT)
+frd$DISTRICT <- sub ("Walton-Verona Independent", "Walton Verona Independent", frd$DISTRICT)
+frd <- merge (index, frd)
 
 
 #2012
@@ -41,8 +46,9 @@ District <- index
 Year <- rep (2012, 169)
 Tot.Enrollment.saar <- saar$TOTAL.2012.KDE
 Tot.Enrollment.elsi <- rep (NA, 169)
-FRD.Lunch.Pct <- rep (NA, 169)
-FRD.Decile <- rep (NA, 169)
+FRD.Lunch.Pct <- frd$FRD_LUNCH_PCT                   #taken from KDE school report card
+FRD.Decile <- cut_number(FRD.Lunch.Pct, n = 10)
+levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Child.Poverty.Pct <- cp$cp.2012.AEC
 Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
 levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
