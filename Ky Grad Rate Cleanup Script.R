@@ -1,3 +1,4 @@
+#build table for Kentucky state-wide reported graduation rates
 library (ggplot2)
 wd <- getwd()
 
@@ -20,6 +21,7 @@ gr <- gr [, grep ("GRAD_", names (gr))]
 afgr <- afgr [afgr$School.Name == "STATE TOTAL" & afgr$Gender == "Total" & 
                 afgr$Ethnicity == "Total", c(1, 5, 19)]
 
+#combine in new table for 2003:2012
 Year <- 2003:2012
 State <- rep ("KY", 10)
 Reported <- (c(as.numeric (gr[1, 1:5]), as.numeric (afgr[,3]))) / 100

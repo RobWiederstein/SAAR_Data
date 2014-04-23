@@ -1,3 +1,4 @@
+#load all cleaned up objects for a build
 #library
 library (ggplot2)
 
