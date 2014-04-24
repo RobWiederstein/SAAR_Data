@@ -478,7 +478,9 @@ rm (list = ls())
 
 #______________________________________________________________________________
 #ELSI Cleanup Script
-saar <- read.table ("SAAR.1999.2012.csv", header = TRUE, sep = ",",
+wd <- getwd()
+file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+saar <- read.table (file, header = TRUE, sep = ",",
                     colClasses = "character")
 
 #import NCES download
@@ -699,8 +701,6 @@ rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
      Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
      Gr.12.Gr.9.ratio.KDE)
 
-cor(tot.2012[sapply(tot.2012, is.numeric)])  #awesome
-
 #2011
 District <- index
 Year <- rep (2011, 169)
@@ -731,8 +731,6 @@ rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
      Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
      Gr.12.Gr.9.ratio.KDE)
-
-cor(tot.2011[sapply(tot.2011, is.numeric)])  #awesome
 
 #2010
 District <- index
@@ -765,8 +763,6 @@ rm    (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
        Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
        Gr.12.Gr.9.ratio.KDE)
 
-cor(tot.2010[sapply(tot.2010, is.numeric)])  #awesome
-
 #2009
 District <- index
 Year <-rep (2009, 169)
@@ -795,8 +791,6 @@ rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
      Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
      Gr.12.Gr.9.ratio.KDE)
-
-cor(tot.2009[sapply(tot.2009, is.numeric)])  #awesome
 
 #2008
 District <- index
@@ -857,9 +851,6 @@ rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
       Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
       Gr.12.Gr.9.ratio.KDE)
 
-
-cor(tot.2007[sapply(tot.2007, is.numeric)])  #awesome
-
 #2006
 District <- index
 Year <-rep (2006, 169)
@@ -888,9 +879,6 @@ rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
       Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
       Gr.12.Gr.9.ratio.KDE)
 
-
-cor(tot.2006[sapply(tot.2006, is.numeric)])  #awesome
-
 #2005
 District <- index
 Year <-rep (2005, 169)
@@ -918,9 +906,6 @@ rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
       FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
       Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
       Gr.12.Gr.9.ratio.KDE)
-
-
-cor(tot.2005[sapply(tot.2005, is.numeric)])  #awesome
 
 #2004
 District <- index
@@ -951,8 +936,6 @@ rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
       Gr.12.Gr.9.ratio.KDE)
 
 
-cor(tot.2004[sapply(tot.2004, is.numeric)])  #awesome
-
 #2003
 District <- index
 Year <-rep (2003, 169)
@@ -981,8 +964,6 @@ rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
       Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
       Gr.12.Gr.9.ratio.KDE)
 
-
-cor(tot.2003[sapply(tot.2003, is.numeric)])  #awesome
 
 cum.2003.2012 <- rbind (tot.2012, tot.2011, tot.2010, tot.2009, tot.2008, tot.2007,
                         tot.2006, tot.2005, tot.2004, tot.2003)
