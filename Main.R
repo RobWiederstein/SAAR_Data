@@ -1,3 +1,5 @@
+Clean.SAAR <- function (){
+library (gdata)
 #SAAR Cleanup Scripts 1.R
 #set colClasses
 set.colClass.1<-c(rep("character", 2), rep("integer", 13) )
@@ -118,7 +120,7 @@ temp<-sub("Independ", "Independent", temp)
 temp<-sub("Walton-Verona Independent", "Walton Verona Independent", temp)
 SAAR2002$DISTRICT<-temp
 setdiff(district.index$DISTRICT, SAAR2002$DISTRICT)
-setdiff(SAAR2002$DISTRICT, SAAR.1999.2012$DISTRICT)
+setdiff(SAAR2002$DISTRICT, district.index$DISTRICT)
 
 #clean 2003
 temp<-sub("^[0-9][0-9][0-9].", "" , SAAR2003$DISTRICT)
@@ -349,14 +351,12 @@ rm(a)
 #Save as R object to load in later script
 saar.new <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
 write.table (SAAR.1999.2012, file = saar.new, sep = ",")
+}
+Clean.AFGR <- function (){
 
-#cleanup
-rm(list = ls())
-
-#______________________________________________________________________________
-#AFGR Cleanup Scripts
-
-saar <- read.table("SAAR.1999.2012.csv", header = TRUE, sep = ",")
+wd <- getwd()
+file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+saar <- read.table (file, header = TRUE, sep = ",")
 
 wd <- getwd()
 AFGR <- read.csv(file = paste (wd, "data sets", "AFGR_2012.csv", sep = "/"), 
@@ -410,12 +410,9 @@ names(afgr.08.12)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2008:2012, "KDE", 
 #Save as R object to load in later script
 afgr.new <- paste (wd, "objects", "afgr.08.12.csv", sep = "/")
 write.table (afgr.08.12, file = afgr.new, sep = ",")
+}
+Clean.CP   <- function (){
 
-#clear workspace
-rm (list = ls())
-
-#______________________________________________________________________________
-#build child poverty indicator
 wd <- getwd()
 
 elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
@@ -472,10 +469,8 @@ tot.cp.2001.2012 <- merge (index, tot.cp.2001.2012)
 #Save as R object to load in later script
 cp.new <- paste (wd, "objects", "tot.cp.2001.2012.csv", sep = "/")
 write.table (tot.cp.2001.2012, file = cp.new, sep = ",")
-
-#cleanup
-rm (list = ls())
-
+}
+Clean.ELSI <- function (){
 #______________________________________________________________________________
 #ELSI Cleanup Script
 wd <- getwd()
@@ -518,12 +513,8 @@ elsi <- merge (index, elsi, by = "DISTRICT")
 #Save as R object to load in later script
 elsi.new <- paste(wd, "objects", "elsi_new.csv", sep = "/")
 write.table (elsi, file = elsi.new, sep = ",")
-
-#cleanup
-rm (list = ls())
-
-#______________________________________________________________________________
-#FRD Lunch Pct Cleanup Script
+}
+Clean.FRDL <- function (){
 #need the free and reduced lunch for 2012.  KDE website for school report card
 
 library (ggplot2)
@@ -558,10 +549,8 @@ le <- cbind (le, FRD_LUNCH_PCT)
 #Save as R object to load in later script
 file <- paste (wd, "objects", "FRD.Lunch.Pct.2012.KDE.csv", sep = "/")
 write.table (le, file = file, sep = ",")
-
-#cleanup
-rm (list = ls())
-#______________________________________________________________________________
+}
+Clean.GRAD <- function (){
 #Grad Rate 2003-2007 was sent via email from Kentucky Department of Education
 #No longer available on website. Disaggregated by school district
 
@@ -581,10 +570,8 @@ detach (gr)
 #Save as R object to load in later script
 gr.new <- paste (wd, "objects", "gr.2003.2007.csv", sep = "/")
 write.csv(gr, file = gr.new)
-
-#clear workspace
-rm (list = ls())
-
+}
+Clean.KYGR <- function (){
 #______________________________________________________________________________
 #build table for Kentucky state-wide reported graduation rates
 library (ggplot2)
@@ -622,11 +609,9 @@ Ky.grad.rate$Reported <- as.numeric (Ky.grad.rate$Reported)
 #Save as R object to load in later script
 file <- paste (wd, "objects", "State.grad.rate.2003.2012.KDE.csv", sep = "/")
 write.table (Ky.grad.rate, file = file, sep = ",")
+}
+Build.CUM  <- function (){
 
-#cleanup
-rm (list = ls())
-
-#______________________________________________________________________________
 #load all cleaned up objects for a build
 #library
 library (ggplot2)
@@ -689,7 +674,7 @@ Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2012.KDE /
 Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2012.KDE / 
      saar$GR8E.2007.KDE
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2012.KDE /
-     saar$GR9E.2008
+     saar$GR9E.2008.KDE
 
 tot.2012 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
@@ -972,14 +957,8 @@ cum.2003.2012 <- rbind (tot.2012, tot.2011, tot.2010, tot.2009, tot.2008, tot.20
 #Save as R object to load in later script
 cumulative <- paste (wd, "objects", "cum.2003.2012.csv", sep = "/")
 write.table (cum.2003.2012, file = cumulative, sep = ",")
-
-#cleanup
-rm (list = ls())
-
-#____________________________________________________________________________
-#Figures Script
-#Make figures for analysis
-#libraries
+}
+Chart      <- function (){
 library ("ggplot2")
 
 #Figures
@@ -1074,3 +1053,4 @@ p4 <- p4 + layer (geom = "line", colour = "red")
 p4 <- p4 + ylim (c(.6, 1))
 p4 <- p4 + xlab("") + ylab("Pct.") + ggtitle("Eighth Grade Cohort vs. State Reported")
 p4 <- p4 + geom_line (aes(ky$Year, ky$Reported))
+}
