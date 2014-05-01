@@ -958,6 +958,72 @@ cum.2003.2012 <- rbind (tot.2012, tot.2011, tot.2010, tot.2009, tot.2008, tot.20
 cumulative <- paste (wd, "objects", "cum.2003.2012.csv", sep = "/")
 write.table (cum.2003.2012, file = cumulative, sep = ",")
 }
+Build.NAT  <- function (){
+#build national eigth grade cohort per Heckman supplementary material
+wd <- getwd()
+file <- paste (wd, "data sets", "ELSI_csv_export_6353406681986067459539.csv", sep = "/")
+gr <- read.csv (file, header = T, sep = ",", strip.white = T, skip = 6, nrow = 51,
+                colClasses = "character")
+
+#set to integer
+for (i in 2:ncol (gr)){
+  gr[,i] <- as.integer (gr [, i])
+}
+
+#eliminate NAs
+begin.states <- gr[,1]
+apply(gr, 2, function(x) length(which(is.na(x))))
+gr <- gr[,1:30]  #25 NAs in column 31
+gr <- gr[complete.cases(gr[, 1:30]), ]
+remain.states <- gr [,1]
+exclude <- setdiff (begin.states, remain.states) #DC, NY, PN, SC, WI excluded
+
+#shorten variable names
+names (gr) <- sub("Grade", "Gr", names (gr))
+names (gr) <- sub ("Diploma", "Dipl", names (gr))
+names (gr) <- sub ("State", "", names (gr))
+names (gr) <- sub ("Students", "Stud", names (gr))
+names (gr) <- sub ("Recipients", "Reci", names (gr))
+names (gr) <- gsub ("..", ".", names (gr), fixed = T)
+names (gr) <- gsub ("..", ".", names (gr), fixed = T)
+names (gr) <- gsub ("..", ".", names (gr), fixed = T)
+names (gr) <- gsub ("..", ".", names (gr), fixed = T)
+
+#total columns
+total <- colSums (gr[,2:ncol (gr)], na.rm = T)
+total <- as.data.frame (total)
+total <- t (total)
+total <-as.data.frame (total)
+
+
+
+Gr.8.C.National.2009.10 <- total$Dipl.Reci.2009.10 / total$Gr.8.Stud.2004.05
+Gr.8.C.National.2008.09 <- total$Dipl.Reci.2008.09 / total$Gr.8.Stud.2003.04
+Gr.8.C.National.2007.08 <- total$Dipl.Reci.2007.08 / total$Gr.8.Stud.2002.03
+Gr.8.C.National.2006.07 <- total$Dipl.Reci.2006.07 / total$Gr.8.Stud.2001.02
+Gr.8.C.National.2005.06 <- total$Dipl.Reci.2005.06 / total$Gr.8.Stud.2000.01
+Gr.8.C.National.2004.05 <- total$Dipl.Reci.2004.05 / total$Gr.8.Stud.1999.00
+Gr.8.C.National.2003.04 <- total$Dipl.Reci.2003.04 / total$Gr.8.Stud.1998.99
+Gr.8.C.National.2002.03 <- total$Dipl.Reci.2002.03 / total$Gr.8.Stud.1997.98
+
+
+Nat.Grad.Rate <- cbind (Gr.8.C.National.2002.03,   Gr.8.C.National.2003.04,
+                        Gr.8.C.National.2004.05,   Gr.8.C.National.2005.06,   Gr.8.C.National.2006.07, Gr.8.C.National.2007.08,
+                        Gr.8.C.National.2008.09,   Gr.8.C.National.2009.10) 
+
+Nat.Grad.Rate <- as.data.frame (t(Nat.Grad.Rate))
+Year <- (2002:2009)
+Nat.Grad.Rate <- cbind (Year, Nat.Grad.Rate)
+a <- Nat.Grad.Rate$Year
+a <- as.character (a)
+a <- as.Date (a, "%Y")
+Nat.Grad.Rate$Year <- a
+names (Nat.Grad.Rate)[2] <- "Gr.8.Cohort.National"
+
+#write object out
+file <- paste (wd, "objects", "Nat.Gr.8.Cohort.2002.2009.csv", sep = "/")
+write.csv (Nat.Grad.Rate, file = file)
+}
 Chart      <- function (){
 library ("ggplot2")
 
