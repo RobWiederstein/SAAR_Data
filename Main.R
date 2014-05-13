@@ -411,16 +411,56 @@ names(afgr.08.12)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2008:2012, "KDE", 
 afgr.new <- paste (wd, "objects", "afgr.08.12.csv", sep = "/")
 write.table (afgr.08.12, file = afgr.new, sep = ",")
 }
+Clean.ELSI <- function (){
+  #ELSI Cleanup Script
+  wd <- getwd()
+  file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+  saar <- read.table (file, header = TRUE, sep = ",",
+                      colClasses = "character")
+  
+  #import NCES download
+  wd <- getwd()
+  ELSI <- paste (wd, "data sets", "ELSI_csv_export_6353280376697842613140.csv",
+                 sep = "/")
+  
+  elsi <- read.csv(file = ELSI, 
+                   sep = ",", 
+                   skip = 6,
+                   nrow = 178,
+                   header = TRUE,
+                   strip.white = TRUE,
+                   colClasses = "character")
+  
+  #build common column for merge
+  index <- saar$DISTRICT
+  rm (saar)
+  reconcile <- elsi$Agency.Name
+  
+  reconcile [1:77] <- index [1:77]
+  reconcile [79:112] <- index [78:111]
+  reconcile [114:144] <- index [112:142]
+  reconcile [146] <- index [143]
+  reconcile [147] <- index [144]
+  reconcile [149:178] <- index [145:174]
+  elsi$Agency.Name <- reconcile
+  names(elsi)[1] <- "DISTRICT"
+  
+  #Merge to index
+  index <- as.data.frame (index)
+  names(index)[1] <- "DISTRICT"
+  elsi <- merge (index, elsi, by = "DISTRICT")
+  
+  #Save as R object to load in later script
+  elsi.new <- paste(wd, "objects", "elsi_new.csv", sep = "/")
+  write.table (elsi, file = elsi.new, sep = ",")
+}
 Clean.CP   <- function (){
 
 wd <- getwd()
-
 elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
                   sep = ",", header = T)
-
 afgr <- read.csv (paste (wd, "objects", "afgr.08.12.csv", sep = "/"),
                   sep = ",", header = T)
-
 cp <- read.csv (paste (wd, "data sets", 
                        "Child poverty rate.csv",
                        sep = "/"), sep = ",", header = T)
@@ -469,50 +509,6 @@ tot.cp.2001.2012 <- merge (index, tot.cp.2001.2012)
 #Save as R object to load in later script
 cp.new <- paste (wd, "objects", "tot.cp.2001.2012.csv", sep = "/")
 write.table (tot.cp.2001.2012, file = cp.new, sep = ",")
-}
-Clean.ELSI <- function (){
-#______________________________________________________________________________
-#ELSI Cleanup Script
-wd <- getwd()
-file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
-saar <- read.table (file, header = TRUE, sep = ",",
-                    colClasses = "character")
-
-#import NCES download
-wd <- getwd()
-ELSI <- paste (wd, "data sets", "ELSI_csv_export_6353280376697842613140.csv",
-               sep = "/")
-
-elsi <- read.csv(file = ELSI, 
-                 sep = ",", 
-                 skip = 6,
-                 nrow = 178,
-                 header = TRUE,
-                 strip.white = TRUE,
-                 colClasses = "character")
-
-#build common column for merge
-index <- saar$DISTRICT
-rm (saar)
-reconcile <- elsi$Agency.Name
-
-reconcile [1:77] <- index [1:77]
-reconcile [79:112] <- index [78:111]
-reconcile [114:144] <- index [112:142]
-reconcile [146] <- index [143]
-reconcile [147] <- index [144]
-reconcile [149:178] <- index [145:174]
-elsi$Agency.Name <- reconcile
-names(elsi)[1] <- "DISTRICT"
-
-#Merge to index
-index <- as.data.frame (index)
-names(index)[1] <- "DISTRICT"
-elsi <- merge (index, elsi, by = "DISTRICT")
-
-#Save as R object to load in later script
-elsi.new <- paste(wd, "objects", "elsi_new.csv", sep = "/")
-write.table (elsi, file = elsi.new, sep = ",")
 }
 Clean.FRDL <- function (){
 #need the free and reduced lunch for 2012.  KDE website for school report card
@@ -572,7 +568,6 @@ gr.new <- paste (wd, "objects", "gr.2003.2007.csv", sep = "/")
 write.csv(gr, file = gr.new)
 }
 Clean.KYGR <- function (){
-#______________________________________________________________________________
 #build table for Kentucky state-wide reported graduation rates
 library (ggplot2)
 wd <- getwd()
@@ -611,7 +606,6 @@ file <- paste (wd, "objects", "State.grad.rate.2003.2012.KDE.csv", sep = "/")
 write.table (Ky.grad.rate, file = file, sep = ",")
 }
 Build.CUM  <- function (){
-
 #load all cleaned up objects for a build
 #library
 library (ggplot2)
@@ -1033,6 +1027,9 @@ file <- paste (wd, "objects", "cum.2003.2012.csv", sep = "/")
 cum <- read.csv (file, sep = ",", header = T, as.is = T)
 file <- paste (wd, "objects", "State.grad.rate.2003.2012.KDE.csv", sep = "/")
 ky <- read.csv (file, sep = ",", header = T, as.is = T)
+file <- paste (wd, "objects", "Nat.Gr.8.Cohort.2002.2009.csv", sep = "/")
+nat <- read.csv (file, sep = ",", header = T, as.is = T)
+
 
 #set years to "Date" format
 cum$Year <- as.Date (as.character (cum$Year), "%Y")
@@ -1095,28 +1092,70 @@ p <- p + layer (geom = "point")
 p1 <- ggplot (table, aes (x = Year, y= Gr.8.Cohort.by.year))
 table$Year <- as.Date (as.character (table$Year), "%Y")
 p1 <- p1 + layer (geom = "line", colour = "red")
-p1 <- p1 + ylim (c(.6, 1))
-p1 <- p1 + xlab("") + ylab("Pct.") + ggtitle("Eighth Grade Cohort")
+p1 <- p1 + ylim (c(.65, .95))
+p1 <- p1 + xlab("") + ylab("Pct.") + ggtitle("Kentucky \n 8th Grade Cohort")
 p1 <- p1 + geom_line (aes(Year, Gr.8.Cohort.FRD.D10))
 p1 <- p1 + geom_line (aes (Year, Gr.8.Cohort.FRD.D01))
+p1 <- p1 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                     y = .9, label = "D01", size = 3.5)
+p1 <- p1 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                     y = .78, label = "Avg", size = 3.5, colour = "red")
+p1 <- p1 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                     y = .7, label = "D10", size = 3.5)
+
 
 p2 <- ggplot (table, aes (x = Year, y= Gr.9.Cohort.by.year))
 p2 <- p2 + layer (geom = "line", colour = "red")
-p2 <- p2 + ylim (c(.6, 1))
-p2 <- p2 + xlab("") + ylab("Pct.") + ggtitle("Ninth Grade Cohort")
+p2 <- p2 + ylim (c(.55, .95))
+p2 <- p2 + xlab("") + ylab("Pct.") + ggtitle("Kentucky \n 9th Grade Cohort")
 p2 <- p2 + geom_line (aes(Year, Gr.9.Cohort.FRD.D10))
 p2 <- p2 + geom_line (aes (Year, Gr.9.Cohort.FRD.D01))
+p2 <- p2 + annotate ("text", x = as.Date (as.character (2003), "%Y"), 
+                     y = .83, label = "D01", size = 3.5)
+p2 <- p2 + annotate ("text", x = as.Date (as.character (2003), "%Y"), 
+                     y = .69, label = "Avg", size = 3.5, colour = "red")
+p2 <- p2 + annotate ("text", x = as.Date (as.character (2003), "%Y"), 
+                     y = .62, label = "D10", size = 3.5)
 
 p3 <- ggplot (table, aes (x = Year, y= Gr.9.Cohort.by.year))
 p3 <- p3 + layer (geom = "line", colour = "red")
-p3 <- p3 + ylim (c(.6, 1))
-p3 <- p3 + xlab("") + ylab("Pct.") + ggtitle("Eighth vs.Ninth \n Grade Cohort")
+p3 <- p3 + ylim (c(.65, .95))
+p3 <- p3 + xlab("") + ylab("Pct.") + ggtitle("Kentucky \n 8th vs. 9th Grade Cohort")
 p3 <- p3 + geom_line (aes(Year, Gr.8.Cohort.by.year ))
+p3 <- p3 + annotate ("text", x = as.Date (as.character (2003), "%Y"), 
+                     y = .69, label = "9th", size = 3.5, colour = "red")
+p3 <- p3 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                     y = .78, label = "8th", size = 3.5)
+
 
 p4 <- ggplot (table, aes (x = Year, y= Gr.8.Cohort.by.year))
 table$Year <- as.Date (as.character (table$Year), "%Y")
 p4 <- p4 + layer (geom = "line", colour = "red")
-p4 <- p4 + ylim (c(.6, 1))
-p4 <- p4 + xlab("") + ylab("Pct.") + ggtitle("Eighth Grade Cohort vs. State Reported")
+p4 <- p4 + ylim (c(.65, .95))
+p4 <- p4 + xlab("") + ylab("Pct.") + ggtitle("Kentucky \n 8th Grade Cohort vs. State Reported")
 p4 <- p4 + geom_line (aes(ky$Year, ky$Reported))
+p4 <- p4 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                     y = .84, label = "Reported", size = 3.5, colour = "black")
+p4 <- p4 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                     y = .78, label = "8th", size = 3.5, colour = "red")
+
+
+#add column to table for national eighth grade cohort rate
+Gr.8.Cohort.National <- nat[2:8, 3]
+Gr.8.Cohort.National <- c(Gr.8.Cohort.National, NA, NA, NA)
+table <- cbind (table, Gr.8.Cohort.National)
+
+
+p5 <- ggplot (table, aes (x = Year, y= Gr.8.Cohort.by.year))
+table$Year <- as.Date (as.character (table$Year), "%Y")
+p5 <- p5 + layer (geom = "line", colour = "red")
+p5 <- p5 + ylim (c(.65, .95))
+p5 <- p5 + xlab("") + ylab("Pct.") + ggtitle("National vs. Kentucky \n 8th Grade Cohort")
+p5 <- p5 + geom_line (aes(table$Year, table$Gr.8.Cohort.National))
+p5 <- p5 + annotate ("text", x = as.Date (as.character (2003), "%Y"), 
+                     y = .81, label = "USA", size = 3.5, colour = "black")
+p5 <- p5 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                     y = .77, label = "KY", size = 3.5, colour = "red")
+
+
 }
