@@ -605,6 +605,274 @@ Ky.grad.rate$Reported <- as.numeric (Ky.grad.rate$Reported)
 file <- paste (wd, "objects", "State.grad.rate.2003.2012.KDE.csv", sep = "/")
 write.table (Ky.grad.rate, file = file, sep = ",")
 }
+Clean.SDCP <- function (){
+#http://www.census.gov/did/www/saipe/data/schools/index.html
+#Poverty rates by school district b/c FRL unreliable
+#get saar and subset to index
+wd <-getwd()
+file  <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+saar <- read.csv (file, as.is = T)
+index <- as.data.frame (saar[,1])
+names (index) <- "DISTRICT"
+
+#import and clean 2003
+wd <- getwd()
+file <- paste (wd, "data sets", "sd03_KY.txt",  sep = "/")
+widths <- c(2, 6, 65, 10, 10, 9, 21)
+sd03 <- read.fwf(file = file, widths = widths, as.is = T, strip.white = T)
+sd03 <- sd03 [, 3:6]
+names (sd03) <- c("DISTRICT", "TOT.POP", "AGE.5.17", "EST.POV.5.17")
+PCT.CH.POV.5.17 <- round (sd03 [,4] / sd03 [,3], 4)
+sd03 <- cbind (sd03, PCT.CH.POV.5.17)
+names (sd03)[-1] <- paste (names(sd03)[-1], "2003", sep = ".")
+sd03$DISTRICT <- gsub (" SCHOOL DISTRICT", "", sd03$DISTRICT)
+
+#match index columns up for merge
+#change first letter to cap
+simpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+        sep="", collapse=" ")
+}
+
+a <-  tolower(sd03$DISTRICT)
+a <- sapply(a, simpleCap)
+a <- as.character (a)
+sd03$DISTRICT <- a
+
+sd03$DISTRICT[54] <- "Erlanger-Elsmere Independent"
+sd03$DISTRICT[96] <- "LaRue County"
+sd03$DISTRICT[115] <- "McCracken County"
+sd03$DISTRICT[116] <- "McCreary County"
+sd03$DISTRICT[117] <- "McLean County"
+
+
+#school district child poverty rate
+sdcp <- merge (index, sd03)
+
+#import and clean 2004
+wd <- getwd()
+file <- paste (wd, "data sets", "sd04_KY.txt",  sep = "/")
+widths <- c(2, 6, 65, 10, 10, 9, 21)
+sd04 <- read.fwf(file = file, widths = widths, as.is = T, strip.white = T)
+sd04 <- sd04 [, 3:6]
+names (sd04) <- c("DISTRICT", "TOT.POP", "AGE.5.17", "EST.POV.5.17")
+PCT.CH.POV.5.17 <- round (sd04 [,4] / sd04 [,3], 4)
+sd04 <- cbind (sd04, PCT.CH.POV.5.17)
+names (sd04)[-1] <- paste (names(sd04)[-1], "2004", sep = ".")
+
+sd04$DISTRICT <- gsub (" SCHOOL DISTRICT", "", sd04$DISTRICT)
+a <-  tolower(sd04$DISTRICT)
+a <- sapply(a, simpleCap)
+a <- as.character (a)
+sd04$DISTRICT <- a
+
+sd04$DISTRICT[54] <- "Erlanger-Elsmere Independent"
+sd04$DISTRICT[96] <- "LaRue County"
+sd04$DISTRICT[115] <- "McCracken County"
+sd04$DISTRICT[116] <- "McCreary County"
+sd04$DISTRICT[117] <- "McLean County"
+
+sdcp <- merge (sdcp, sd04)
+
+#inport and clean 2005
+wd <- getwd()
+file <- paste (wd, "data sets", "sd05_KY.txt",  sep = "/")
+widths <- c(2, 6, 65, 10, 10, 9, 21)
+sd05 <- read.fwf(file = file, widths = widths, as.is = T, strip.white = T)
+sd05 <- sd05 [, 3:6]
+names (sd05) <- c("DISTRICT", "TOT.POP", "AGE.5.17", "EST.POV.5.17")
+PCT.CH.POV.5.17 <- round (sd05 [,4] / sd05 [,3], 4)
+sd05 <- cbind (sd05, PCT.CH.POV.5.17)
+names (sd05)[-1] <- paste (names(sd05)[-1], "2005", sep = ".")
+
+sd05$DISTRICT <- gsub (" SCHOOL DISTRICT", "", sd05$DISTRICT)
+a <-  tolower(sd05$DISTRICT)
+a <- sapply(a, simpleCap)
+a <- as.character (a)
+sd05$DISTRICT <- a
+
+sd05$DISTRICT[54] <- "Erlanger-Elsmere Independent"
+sd05$DISTRICT[96] <- "LaRue County"
+sd05$DISTRICT[115] <- "McCracken County"
+sd05$DISTRICT[116] <- "McCreary County"
+sd05$DISTRICT[117] <- "McLean County"
+
+sdcp <- merge (sdcp, sd05)
+
+#import and clean 2006
+wd <- getwd()
+file <- paste (wd, "data sets", "sd06_KY.txt",  sep = "/")
+widths <- c(2, 6, 65, 10, 10, 9, 21)
+sd06 <- read.fwf(file = file, widths = widths, as.is = T, strip.white = T)
+sd06 <- sd06 [, 3:6]
+names (sd06) <- c("DISTRICT", "TOT.POP", "AGE.5.17", "EST.POV.5.17")
+PCT.CH.POV.5.17 <- round (sd06 [,4] / sd06 [,3], 4)
+sd06 <- cbind (sd06, PCT.CH.POV.5.17)
+names (sd06)[-1] <- paste (names(sd06)[-1], "2006", sep = ".")
+
+sd06$DISTRICT <- gsub (" SCHOOL DISTRICT", "", sd06$DISTRICT)
+a <-  tolower(sd06$DISTRICT)
+a <- sapply(a, simpleCap)
+a <- as.character (a)
+sd06$DISTRICT <- a
+
+sd06$DISTRICT[54] <- "Erlanger-Elsmere Independent"
+sd06$DISTRICT[96] <- "LaRue County"
+sd06$DISTRICT[115] <- "McCracken County"
+sd06$DISTRICT[116] <- "McCreary County"
+sd06$DISTRICT[117] <- "McLean County"
+
+sdcp <- merge (sdcp, sd06)
+
+#import and clean 2007
+wd <- getwd()
+file <- paste (wd, "data sets", "sd07_KY.txt",  sep = "/")
+widths <- c(2, 6, 65, 10, 10, 9, 21)
+sd07 <- read.fwf(file = file, widths = widths, as.is = T, strip.white = T)
+sd07 <- sd07 [, 3:6]
+names (sd07) <- c("DISTRICT", "TOT.POP", "AGE.5.17", "EST.POV.5.17")
+PCT.CH.POV.5.17 <- round (sd07 [,4] / sd07 [,3], 4)
+sd07 <- cbind (sd07, PCT.CH.POV.5.17)
+names (sd07)[-1] <- paste (names(sd07)[-1], "2007", sep = ".")
+
+sd07$DISTRICT <- gsub (" SCHOOL DISTRICT", "", sd07$DISTRICT)
+a <-  tolower(sd07$DISTRICT)
+a <- sapply(a, simpleCap)
+a <- as.character (a)
+sd07$DISTRICT <- a
+
+sd07$DISTRICT[54] <- "Erlanger-Elsmere Independent"
+sd07$DISTRICT[96] <- "LaRue County"
+sd07$DISTRICT[115] <- "McCracken County"
+sd07$DISTRICT[116] <- "McCreary County"
+sd07$DISTRICT[117] <- "McLean County"
+
+#Laurel & Meade County missing
+Laurel.County <- c("Laurel County", rep (NA, 4))
+Meade.County <- c("Meade County", rep (NA, 4))
+sd07 <- rbind (sd07, Laurel.County, Meade.County)
+
+sdcp <- merge (sdcp, sd07)
+
+#import and clean 2008
+wd <- getwd()
+file <- paste (wd, "data sets", "sd08_KY.txt",  sep = "/")
+widths <- c(2, 6, 65, 10, 10, 9, 21)
+sd08 <- read.fwf(file = file, widths = widths, as.is = T, strip.white = T)
+sd08 <- sd08 [, 3:6]
+names (sd08) <- c("DISTRICT", "TOT.POP", "AGE.5.17", "EST.POV.5.17")
+PCT.CH.POV.5.17 <- round (sd08 [,4] / sd08 [,3], 4)
+sd08 <- cbind (sd08, PCT.CH.POV.5.17)
+names (sd08)[-1] <- paste (names(sd08)[-1], "2008", sep = ".")
+
+sd08$DISTRICT <- gsub (" SCHOOL DISTRICT", "", sd08$DISTRICT)
+a <-  tolower(sd08$DISTRICT)
+a <- sapply(a, simpleCap)
+a <- as.character (a)
+sd08$DISTRICT <- a
+
+sd08$DISTRICT[54] <- "Erlanger-Elsmere Independent"
+sd08$DISTRICT[96] <- "LaRue County"
+sd08$DISTRICT[115] <- "McCracken County"
+sd08$DISTRICT[116] <- "McCreary County"
+sd08$DISTRICT[117] <- "McLean County"
+
+#Laurel & Meade County missing
+Laurel.County <- c("Laurel County", rep (NA, 4))
+Meade.County <- c("Meade County", rep (NA, 4))
+sd08 <- rbind (sd08, Laurel.County, Meade.County)
+
+sdcp <- merge (sdcp, sd08)
+
+#import and clean 2009
+wd <- getwd()
+file <- paste (wd, "data sets", "sd09_KY.txt",  sep = "/")
+widths <- c(2, 6, 65, 10, 10, 9, 21)
+sd09 <- read.fwf(file = file, widths = widths, as.is = T, strip.white = T)
+sd09 <- sd09 [, 3:6]
+names (sd09) <- c("DISTRICT", "TOT.POP", "AGE.5.17", "EST.POV.5.17")
+PCT.CH.POV.5.17 <- round (sd09 [,4] / sd09 [,3], 4)
+sd09 <- cbind (sd09, PCT.CH.POV.5.17)
+names (sd09)[-1] <- paste (names(sd09)[-1], "2009", sep = ".")
+
+sd09$DISTRICT <- gsub (" School District", "", sd09$DISTRICT)
+
+#Laurel & Meade County are back
+
+#name changes and hyphens
+sd09$DISTRICT[95] <- "LaRue County"
+sd09$DISTRICT[146] <- "Raceland Independent"
+sd09$DISTRICT[166] <- "Walton Verona Independent"
+
+#merge
+sdcp <- merge (sdcp, sd09)
+
+#import and clean 2010
+wd <- getwd()
+file <- paste (wd, "data sets", "sd10_KY.txt",  sep = "/")
+widths <- c(2, 6, 72, 10, 10, 8, 21)
+sd10 <- read.fwf(file = file, widths = widths, colClasses = "character", strip.white = T)
+sd10 <- sd10 [, 3:6]
+names (sd10) <- c("DISTRICT", "TOT.POP", "AGE.5.17", "EST.POV.5.17")
+PCT.CH.POV.5.17 <- round (as.integer (sd10 [,4]) / as.integer (sd10 [,3]), 4)
+sd10 <- cbind (sd10, PCT.CH.POV.5.17)
+names (sd10)[-1] <- paste (names(sd10)[-1], "2010", sep = ".")
+sd10$DISTRICT <- gsub (" School District", "", sd10$DISTRICT)
+
+#name changes and hyphens
+sd10$DISTRICT[95] <- "LaRue County"
+sd10$DISTRICT[146] <- "Raceland Independent"
+sd10$DISTRICT[166] <- "Walton Verona Independent"
+
+sdcp <- merge (sdcp, sd10)
+
+#import and clean 2011
+wd <- getwd()
+file <- paste (wd, "data sets", "sd11_KY.txt",  sep = "/")
+widths <- c(2, 6, 72, 10, 10, 8, 21)
+sd11 <- read.fwf(file = file, widths = widths, colClasses = "character", strip.white = T)
+sd11 <- sd11 [, 3:6]
+names (sd11) <- c("DISTRICT", "TOT.POP", "AGE.5.17", "EST.POV.5.17")
+PCT.CH.POV.5.17 <- round (as.integer (sd11 [,4]) / as.integer (sd11 [,3]), 4)
+sd11 <- cbind (sd11, PCT.CH.POV.5.17)
+names (sd11)[-1] <- paste (names(sd11)[-1], "2011", sep = ".")
+sd11$DISTRICT <- gsub (" School District", "", sd11$DISTRICT)
+
+#name changes and hyphens
+sd11$DISTRICT[95] <- "LaRue County"
+sd11$DISTRICT[146] <- "Raceland Independent"
+sd11$DISTRICT[166] <- "Walton Verona Independent"
+
+sdcp <- merge (sdcp, sd11)
+
+#import and clean 2012
+wd <- getwd()
+file <- paste (wd, "data sets", "sd12_KY.txt",  sep = "/")
+widths <- c(2, 6, 72, 10, 10, 8, 21)
+sd12 <- read.fwf(file = file, widths = widths, colClasses = "character", strip.white = T)
+sd12 <- sd12 [, 3:6]
+names (sd12) <- c("DISTRICT", "TOT.POP", "AGE.5.17", "EST.POV.5.17")
+PCT.CH.POV.5.17 <- round (as.integer (sd12 [,4]) / as.integer (sd12 [,3]), 4)
+sd12 <- cbind (sd12, PCT.CH.POV.5.17)
+names (sd12)[-1] <- paste (names(sd12)[-1], "2012", sep = ".")
+sd12$DISTRICT <- gsub (" School District", "", sd12$DISTRICT)
+
+#name changes and hyphens
+sd12$DISTRICT[95] <- "LaRue County"
+sd12$DISTRICT[146] <- "Raceland Independent"
+sd12$DISTRICT[166] <- "Walton Verona Independent"
+
+sdcp <- merge (sdcp, sd12)
+
+#pull out percentages
+sdcp <- sdcp[, c(1, grep ("PCT", names (sdcp)))]
+
+#save in objects
+wd <- getwd()
+file <- paste (wd, "objects", "Child.Poverty.by.School.District.Census.2003.2012.csv", sep = "/")
+write.csv (sdcp, file)
+}
 Build.CUM  <- function (){
 #load all cleaned up objects for a build
 #library
@@ -1144,10 +1412,10 @@ p4 <- p4 + annotate ("text", x = as.Date (as.character (2004), "%Y"),
 Gr.8.Cohort.National <- nat[2:8, 3]
 Gr.8.Cohort.National <- c(Gr.8.Cohort.National, NA, NA, NA)
 table <- cbind (table, Gr.8.Cohort.National)
+table$Year <- as.Date (as.character (table$Year), "%Y")
 
 
 p5 <- ggplot (table, aes (x = Year, y= Gr.8.Cohort.by.year))
-table$Year <- as.Date (as.character (table$Year), "%Y")
 p5 <- p5 + layer (geom = "line", colour = "red")
 p5 <- p5 + ylim (c(.65, .95))
 p5 <- p5 + xlab("") + ylab("Pct.") + ggtitle("National vs. Kentucky \n 8th Grade Cohort")
@@ -1159,3 +1427,55 @@ p5 <- p5 + annotate ("text", x = as.Date (as.character (2004), "%Y"),
 
 
 }
+
+library (ggplot2)
+
+wd <- getwd()
+file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+saar <- read.csv (file)
+Gr8E <- saar [, grep ("GR8E", names (saar))]
+Gr12E <- saar [, grep ("GR12E", names (saar))]
+TotGr8E <- colSums (Gr8E)
+TotGr12E <- colSums (Gr12E)
+Year <- as.Date (as.character (1999:2012), "%Y")
+E <- as.data.frame (cbind (Year, TotGr8E, TotGr12E))
+E$Year <- Year
+
+Missing <- E [5:14, 3] - E[1:10, 2]
+Missing <- c(rep(NA, 4), Missing)
+E <- cbind (E, Missing)
+
+
+p1 <- ggplot(E, aes (x = Year, y = TotGr8E))
+p1 <- p1 + geom_line ()
+p1 <- p1 + ylim (-10000, 0)
+p1 <- p1 + xlab ("Year") + ylab ("Missing Students") + ggtitle ("Difference Between 8th and 12th Grade
+                                                                Enrollments")
+p1 <- p1 + xlim (min (E[5,1]), max (E$Year))
+p1 <- p1 + geom_line (y = TotGr12E)
+p1 <- p1 + geom_line (y = Missing)
+p1
+
+wd <- getwd()
+file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+saar <- read.csv (file)
+file <- paste (wd, "data sets", "Grad Rate 2003-2007.csv", sep = "/")
+gr <- read.csv (file)
+file <- paste (wd, "objects", "afgr.08.12.csv", sep = "/")
+afgr <- read.csv (file)
+
+Gr8E <- saar [, c(1, grep ("GR8E", names (saar)))]
+Gr8E.tot <- colSums (Gr8E[,2:15])
+Gr8E.tot <- Gr8E.tot[5: length (Gr8E.tot)]
+
+attach (gr)
+gr <- gr [, c(4, 5, grep ("GRADS_4YR", names (gr)))]
+gr <- gr [SCHNAME == "---DISTRICT TOTAL---", ]
+gr <- gr[, -2]
+detach (gr)
+
+Diplomas <- c(colSums (gr[, 2:6]), colSums (afgr[, 2:6 ]))
+Diplomas <- as.data.frame (Diplomas)
+row.names(Diplomas) <-  (paste ("Grad.w.Diploma.in.4.years", 2003:2012, "KDE", sep = "."))
+Year <- as.Date (as.character (2003:2012), "%Y")
+Diplomas <- cbind (Year, Diplomas, Gr8E.tot)
