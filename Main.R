@@ -887,12 +887,15 @@ afgr <- read.csv (paste (wd, "objects", "afgr.08.12.csv", sep = "/"),
                   sep = ",", header = T, as.is = TRUE)
 elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
                   sep = ",", header = T, as.is = TRUE)
-cp <- read.csv (paste (wd, "objects", "tot.cp.2001.2012.csv", sep = "/" ),
+cp   <- read.csv (paste (wd, "objects", "tot.cp.2001.2012.csv", sep = "/" ),
                 sep = ",", header = T, as.is = TRUE)
-gr <- read.csv (paste (wd, "objects", "gr.2003.2007.csv", sep = "/" ),
+gr   <- read.csv (paste (wd, "objects", "gr.2003.2007.csv", sep = "/" ),
                 sep = ",", header = T, as.is = TRUE)
-frd <- read.csv (paste (wd, "objects", "FRD.Lunch.Pct.2012.KDE.csv", sep = "/" ),
+frd  <- read.csv (paste (wd, "objects", "FRD.Lunch.Pct.2012.KDE.csv", sep = "/" ),
                  sep = ",", header = T, as.is = TRUE)
+
+sdcp <- read.csv (paste (wd, "objects", "Child.Poverty.by.School.District.Census.2003.2012.csv", sep = "/"),
+                  sep = ",", header = T, as.is = TRUE)
 
 #really small schools with 8 grade enrollment, but no 12th grade
 #probably why they are missing on the afgr data
@@ -916,7 +919,7 @@ gr <- merge (index, gr)
 frd$DISTRICT <- sub ("Raceland-Worthington Independent", "Raceland Independent", frd$DISTRICT)
 frd$DISTRICT <- sub ("Walton-Verona Independent", "Walton Verona Independent", frd$DISTRICT)
 frd <- merge (index, frd)
-
+sdcp <- merge (index, sdcp)
 
 #2012
 District <- index
@@ -937,11 +940,17 @@ Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2012.KDE /
      saar$GR8E.2007.KDE
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2012.KDE /
      saar$GR9E.2008.KDE
-
 tot.2012 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
                    Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
+#add census data
+School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2012
+School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+tot.2012 <- cbind (tot.2012, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#end census data
 
 rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
@@ -969,10 +978,19 @@ Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2011.KDE /
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2011.KDE /
      saar$GR9E.2007.KDE
 
+
 tot.2011 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
                    Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
+
+#add census data
+School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2011
+School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+tot.2011 <- cbind (tot.2011, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#end census data
 
 rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
@@ -1005,6 +1023,14 @@ tot.2010 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
 
+#add census data
+School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2010
+School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+tot.2010 <- cbind (tot.2010, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#end census data
+
 rm    (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
        FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
        Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
@@ -1033,6 +1059,13 @@ tot.2009 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
                    Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
+#add census data
+School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2009
+School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+tot.2009 <- cbind (tot.2009, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#end census data
 
 rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
@@ -1062,7 +1095,13 @@ tot.2008 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
                    Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
-
+#add census data
+School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2008
+School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+tot.2008 <- cbind (tot.2008, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#end census data
 
 rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
@@ -1091,7 +1130,13 @@ tot.2007 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
                    Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
-
+#add census data
+School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2007
+School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+tot.2007 <- cbind (tot.2007, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#end census data
 
 rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
       FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
@@ -1120,6 +1165,13 @@ tot.2006 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
 
+#add census data
+School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2006
+School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+tot.2006 <- cbind (tot.2006, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#end census data
 
 rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
       FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
@@ -1148,6 +1200,13 @@ tot.2005 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
 
+#add census data
+School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2005
+School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+tot.2005 <- cbind (tot.2005, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#end census data
 
 rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
       FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
@@ -1175,7 +1234,13 @@ tot.2004 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
                    Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
-
+#add census data
+School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2004
+School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+tot.2004 <- cbind (tot.2004, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#end census data
 
 rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
       FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
@@ -1205,6 +1270,13 @@ tot.2003 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
                    Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
 
+#add census data
+School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2003
+School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+tot.2003 <- cbind (tot.2003, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#end census data
 
 rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
       FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
