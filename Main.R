@@ -1,4 +1,4 @@
-Clean.SAAR <- function (){
+Clean.SAAR   <- function (){
 library (gdata)
 #SAAR Cleanup Scripts 1.R
 #set colClasses
@@ -352,7 +352,7 @@ rm(a)
 saar.new <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
 write.table (SAAR.1999.2012, file = saar.new, sep = ",")
 }
-Clean.AFGR <- function (){
+Clean.AFGR   <- function (){
 
 wd <- getwd()
 file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
@@ -411,7 +411,7 @@ names(afgr.08.12)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2008:2012, "KDE", 
 afgr.new <- paste (wd, "objects", "afgr.08.12.csv", sep = "/")
 write.table (afgr.08.12, file = afgr.new, sep = ",")
 }
-Clean.ELSI <- function (){
+Clean.ELSI   <- function (){
   #ELSI Cleanup Script
   wd <- getwd()
   file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
@@ -454,7 +454,7 @@ Clean.ELSI <- function (){
   elsi.new <- paste(wd, "objects", "elsi_new.csv", sep = "/")
   write.table (elsi, file = elsi.new, sep = ",")
 }
-Clean.CP   <- function (){
+Clean.CP     <- function (){
 
 wd <- getwd()
 elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
@@ -510,7 +510,7 @@ tot.cp.2001.2012 <- merge (index, tot.cp.2001.2012)
 cp.new <- paste (wd, "objects", "tot.cp.2001.2012.csv", sep = "/")
 write.table (tot.cp.2001.2012, file = cp.new, sep = ",")
 }
-Clean.FRDL <- function (){
+Clean.FRDL   <- function (){
 #need the free and reduced lunch for 2012.  KDE website for school report card
 
 library (ggplot2)
@@ -546,7 +546,7 @@ le <- cbind (le, FRD_LUNCH_PCT)
 file <- paste (wd, "objects", "FRD.Lunch.Pct.2012.KDE.csv", sep = "/")
 write.table (le, file = file, sep = ",")
 }
-Clean.GRAD <- function (){
+Clean.GRAD   <- function (){
 #Grad Rate 2003-2007 was sent via email from Kentucky Department of Education
 #No longer available on website. Disaggregated by school district
 
@@ -567,7 +567,7 @@ detach (gr)
 gr.new <- paste (wd, "objects", "gr.2003.2007.csv", sep = "/")
 write.csv(gr, file = gr.new)
 }
-Clean.KYGR <- function (){
+Clean.KYGR   <- function (){
 #build table for Kentucky state-wide reported graduation rates
 library (ggplot2)
 wd <- getwd()
@@ -605,9 +605,9 @@ Ky.grad.rate$Reported <- as.numeric (Ky.grad.rate$Reported)
 file <- paste (wd, "objects", "State.grad.rate.2003.2012.KDE.csv", sep = "/")
 write.table (Ky.grad.rate, file = file, sep = ",")
 }
-Clean.SDCP <- function (){
+Clean.SDCP   <- function (){
 #http://www.census.gov/did/www/saipe/data/schools/index.html
-#Poverty rates by school district b/c FRL unreliable
+#Poverty rates by school district b/c FRL crude
 #get saar and subset to index
 wd <-getwd()
 file  <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
@@ -873,7 +873,7 @@ wd <- getwd()
 file <- paste (wd, "objects", "Child.Poverty.by.School.District.Census.2003.2012.csv", sep = "/")
 write.csv (sdcp, file)
 }
-Build.CUM  <- function (){
+Build.CUM    <- function (){
 #load all cleaned up objects for a build
 #library
 library (ggplot2)
@@ -1292,7 +1292,7 @@ cum.2003.2012 <- rbind (tot.2012, tot.2011, tot.2010, tot.2009, tot.2008, tot.20
 cumulative <- paste (wd, "objects", "cum.2003.2012.csv", sep = "/")
 write.table (cum.2003.2012, file = cumulative, sep = ",")
 }
-Build.NAT  <- function (){
+Build.NAT    <- function (){
 #build national eigth grade cohort per Heckman supplementary material
 wd <- getwd()
 file <- paste (wd, "data sets", "ELSI_csv_export_6353406681986067459539.csv", sep = "/")
@@ -1358,7 +1358,173 @@ names (Nat.Grad.Rate)[2] <- "Gr.8.Cohort.National"
 file <- paste (wd, "objects", "Nat.Gr.8.Cohort.2002.2009.csv", sep = "/")
 write.csv (Nat.Grad.Rate, file = file)
 }
-Chart      <- function (){
+Fig.CCD.KDE  <- function (){
+#compare CCD data to KDEdata
+# 4 plots
+wd <- getwd()
+saar <- read.csv (paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/"), 
+                  sep = ",", header = T, as.is = TRUE)
+elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
+                  sep = ",", header = T, as.is = TRUE)
+
+elsi <- elsi [, c(1, grep ("Grade.8", names (elsi)))]
+elsi <- elsi [, c(1, 16:2)]
+elsi <- elsi [, c(-2, -3)]
+saar <- saar[, c(1, grep ("GR8E", names (saar)))]
+elsi[2:14] <- sapply (elsi[2:14], as.integer)
+names (elsi) <- gsub("Students..Public.School..", "", names(elsi))
+
+
+Year <- 1999:2012
+Grade.8.elsi <- as.array (colSums (elsi[2:14], na.rm = T))
+Grade.8.elsi <- c(Grade.8.elsi, NA)
+Grade.8.saar <- as.array (colSums (saar [2:15], na.rm = T))
+Diff <- Grade.8.saar - Grade.8.elsi
+new <- as.data.frame (cbind (Year, Grade.8.saar, Grade.8.elsi, Diff))
+
+#Plot 8th Grade enrollment from CCD to KDE SAAR Report
+library (ggplot2)
+p1 <- ggplot(new, aes (Year, Grade.8.elsi))
+p1 <- p1 + geom_line()
+p1 <- p1 + ggtitle ("Kentucky Eighth Grade Enrollments") + ylab ("Students") + xlab ("Year")
+p1 <- p1 + ylim (25000, 75000)
+p1 <- p1 + scale_x_continuous (breaks = seq(from = 1999, to = 2012, by = 2))
+p1 <- p1 + geom_line (aes (Year, Grade.8.saar), colour = "red")
+p1 <- p1 + annotate ("text", x = 2011.5, y = 53000, label = "SAAR", colour = "red")
+p1 <- p1 + annotate ("text", x = 2011.5, y = 48000, label = "CCD", colour = "black")
+p1
+
+#Compare 9th Grade enrollment from CCD to KDE SAAR Report
+wd <- getwd()
+saar <- read.csv (paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/"), 
+                  sep = ",", header = T, as.is = TRUE)
+elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
+                  sep = ",", header = T, as.is = TRUE)
+
+elsi <- elsi [, c(1, grep ("Grade.9", names (elsi)))]
+elsi <- elsi [, c(1, 16:2)]
+elsi <- elsi [, c(-2, -3)]
+saar <- saar[, c(1, grep ("GR9E", names (saar)))]
+elsi[2:14] <- sapply (elsi[2:14], as.integer)
+nces <- c(colSums (elsi [2:14], na.rm = T), NA)
+kde <- colSums (saar [2:15], na.rm = T)
+
+
+Year <- c(1999:2012)
+Diff <- kde - nces
+new <- as.data.frame (cbind (Year, kde, nces, Diff))
+
+#plot 
+p1 <- ggplot (new, aes (Year, nces))
+p1 <- p1 + geom_line()
+p1 <- p1 + geom_line (aes (Year, kde), colour = "red")
+p1 <- p1 + ylim (25000, 75000)
+p1 <- p1 + scale_x_continuous (breaks = seq(from = 1999, to = 2012, by = 2))
+p1 <- p1 + ggtitle ("Kentucky Ninth Grade Enrollments") + ylab ("Students")
+p1 <- p1 + annotate ("text", x = 2011.5, y = 57000, label = "SAAR", colour = "red")
+p1 <- p1 + annotate ("text", x = 2011, y = 50000, label = "CCD", colour = "black")
+p1
+
+#compare diploma recipients
+wd <- getwd()
+elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
+                  sep = ",", header = T, as.is = TRUE)
+gr <- read.csv (paste (wd, "objects", "gr.2003.2007.csv", sep = "/" ),
+                sep = ",", header = T, as.is = T)
+afgr <- read.csv (paste (wd, "objects", "afgr.08.12.csv", sep = "/" ),
+                  sep = ",", header = T, as.is = T)
+
+
+elsi <- elsi[, c(1,grep ("Diploma.Recipients", names (elsi)))]
+elsi <- elsi [, c(1, 24:2)]
+names (elsi) <- gsub (".Recipients.......District.", "", names (elsi))
+elsi <- elsi[, c(1, 19:24)]
+elsi[, 2:7] <- sapply (elsi [,2:7], as.integer)
+elsi <- colSums (elsi[,2:7], na.rm = T)
+elsi[3] <- trunc((elsi[2] + elsi[4])/2, 0)
+nces <- c(elsi, rep (NA, 4))
+
+
+afgr <- colSums (afgr[2:6])
+gr <- colSums (gr[3:7], na.rm = T)
+kde <- c(gr, afgr)
+diff <- kde - nces
+
+Year <- 2003:2012
+new <- as.data.frame (cbind (Year, kde, nces, diff))
+#new$Year <- as.Date (as.character (new$Year), "%Y")
+
+p1 <- ggplot (new, aes (Year, kde))
+p1 <- p1 + geom_line(colour = "red")
+p1 <- p1 + ylim (25000, 75000)
+p1 <- p1 + scale_x_continuous (limits = c(2001, 2015), breaks = seq (from = 1999, to = 2015, by = 2))
+p1 <- p1 + geom_line (aes(Year, nces), colour = "black")
+p1 <- p1 + ylab ("Reg. Diplomas") + ggtitle ("Kentucky Diploma Recipients")
+p1 <- p1 + annotate ("text", x = 2008, y = 44000, label = "CCD", colour = "black")
+p1 <- p1 + annotate ("text", x = 2012, y = 39000, label = "KDE", colour = "red")
+p1
+
+# compare saar ratio to common core ratio
+wd <- getwd()
+elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
+                  sep = ",", header = T, as.is = TRUE)
+gr <- read.csv (paste (wd, "objects", "gr.2003.2007.csv", sep = "/" ),
+                sep = ",", header = T, as.is = T)
+afgr <- read.csv (paste (wd, "objects", "afgr.08.12.csv", sep = "/" ),
+                  sep = ",", header = T, as.is = T)
+saar <- read.csv (paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/"), 
+                  sep = ",", header = T, as.is = TRUE)
+
+#kde data
+saar <- saar[, c(1, grep ("GR8E", names (saar)))]
+gr <- colSums (gr[3:7], na.rm = T)
+afgr <- colSums (afgr[2:6])
+saar <- saar[, 1:10]
+saar <- colSums(saar[2:10])
+dip.kde <- c(gr, afgr)
+dip.kde <- dip.kde [-1]
+gr.kde <- dip.kde / saar
+
+#NCES data
+dip.nces <- elsi[, c(1, grep ("Diploma.R", names (elsi)))]
+names (dip.nces) <- gsub ("Diploma.Recipients.......District..", "D.R.", names (dip.nces))
+dip.nces <- dip.nces[, c(1, 24:2)]
+dip.nces <- dip.nces [, 19:24]
+dip.nces <- sapply(dip.nces, as.integer)
+dip.nces <- colSums (dip.nces, na.rm = T)
+dip.nces [3] <- round ((38133 + 39086) / 2, 0) #data imputation for missing data in 2005
+dip.nces <- dip.nces [-1]
+
+enr.nces <- elsi [, c(1, grep("Grade.8", names (elsi)))]
+names (enr.nces) <- gsub("Grade.8.Students..Public.School..", "G8.", names (enr.nces))
+enr.nces <- enr.nces [, c(1, 16:2)]
+enr.nces <- enr.nces [, c(-2,-3)]
+enr.nces <- enr.nces [, c(2:6)]
+enr.nces <- sapply (enr.nces, as.integer)
+enr.nces <- colSums (enr.nces, na.rm = T)
+gr.nces <- dip.nces / enr.nces
+gr.nces <- c(gr.nces, rep (NA, 4))
+
+#build table
+Year <- 2004:2012
+diff <- gr.nces - gr.kde
+grad <- as.data.frame (cbind (Year, gr.kde, gr.nces, diff))
+
+p1 <- ggplot(grad, aes (Year, gr.kde))
+p1 <- p1 + geom_line(colour = "red")
+p1 <- p1 + ylim (.6, .95)
+p1 <- p1 + scale_x_continuous (limits = c(2001, 2015), breaks = seq(from = 2001, to = 2015, by = 2))
+p1 <- p1 + geom_line (aes (Year, gr.nces), colour = "black")
+p1 <- p1 + xlab("Year") + ylab ("Graduation Rate") + ggtitle ("Kentucky Eighth Grade Cohort")
+p1 <- p1 + annotate ("text", x = 2008, y = .85, label = "CCD")
+p1 <- p1 + annotate ("text" , x = 2012, y = .78, label = "KDE", colour = "red")
+p1 <- p1 + annotate("rect", xmin = 2002, xmax = 2014, ymin = .65, ymax = .9,
+                    alpha = .1)
+p1 <- p1 + annotate ("text", x = 2013, y = .67, label = "NCLB", size = 5)
+
+p1
+}
+Chart        <- function (){
 library ("ggplot2")
 
 #Figures
@@ -1380,14 +1546,65 @@ FRD.D01 <- subset (cum, cum$FRD.Decile == "D01")
 FRD.D10 <- subset (cum, cum$FRD.Decile =="D10")
 CP.D01 <- subset (cum, cum$Poverty.Decile=="D01")
 CP.D10 <- subset (cum, cum$Poverty.Decile=="D10")
-Extreme <- rbind(FRD.D01, FRD.D10)
 
+#set up all deciles for School Poverty
+SP.D01 <- subset (cum, cum$School.Dist.Child.Poverty.Decile == "D01")
+SP.D02 <- subset (cum, cum$School.Dist.Child.Poverty.Decile == "D02")
+SP.D03 <- subset (cum, cum$School.Dist.Child.Poverty.Decile == "D03")
+SP.D04 <- subset (cum, cum$School.Dist.Child.Poverty.Decile == "D04")
+SP.D05 <- subset (cum, cum$School.Dist.Child.Poverty.Decile == "D05")
+SP.D06 <- subset (cum, cum$School.Dist.Child.Poverty.Decile == "D06")
+SP.D07 <- subset (cum, cum$School.Dist.Child.Poverty.Decile == "D07")
+SP.D08 <- subset (cum, cum$School.Dist.Child.Poverty.Decile == "D08")
+SP.D09 <- subset (cum, cum$School.Dist.Child.Poverty.Decile == "D09")
+SP.D10 <- subset (cum, cum$School.Dist.Child.Poverty.Decile == "D10")
+
+#set up averages of each decile for school poverty
+Gr.8.Cohort.SP.D01 <-  tapply (SP.D01$Gr.8.Cohort.KDE, INDEX = SP.D01$Year, FUN = mean)
+Gr.8.Cohort.SP.D02 <-  tapply (SP.D02$Gr.8.Cohort.KDE, INDEX = SP.D02$Year, FUN = mean)
+Gr.8.Cohort.SP.D03 <-  tapply (SP.D03$Gr.8.Cohort.KDE, INDEX = SP.D03$Year, FUN = mean)
+Gr.8.Cohort.SP.D04 <-  tapply (SP.D04$Gr.8.Cohort.KDE, INDEX = SP.D04$Year, FUN = mean)
+Gr.8.Cohort.SP.D05 <-  tapply (SP.D05$Gr.8.Cohort.KDE, INDEX = SP.D05$Year, FUN = mean)
+Gr.8.Cohort.SP.D06 <-  tapply (SP.D06$Gr.8.Cohort.KDE, INDEX = SP.D06$Year, FUN = mean)
+Gr.8.Cohort.SP.D07 <-  tapply (SP.D07$Gr.8.Cohort.KDE, INDEX = SP.D07$Year, FUN = mean)
+Gr.8.Cohort.SP.D08 <-  tapply (SP.D08$Gr.8.Cohort.KDE, INDEX = SP.D08$Year, FUN = mean)
+Gr.8.Cohort.SP.D09 <-  tapply (SP.D09$Gr.8.Cohort.KDE, INDEX = SP.D09$Year, FUN = mean)
+Gr.8.Cohort.SP.D10 <-  tapply (SP.D10$Gr.8.Cohort.KDE, INDEX = SP.D10$Year, FUN = mean)
+
+#create data frame
+Gr.8.Cohort.SP.All <- cbind (Gr.8.Cohort.SP.D01,
+                             Gr.8.Cohort.SP.D02,
+                             Gr.8.Cohort.SP.D03,
+                             Gr.8.Cohort.SP.D04,
+                             Gr.8.Cohort.SP.D05,
+                             Gr.8.Cohort.SP.D06,
+                             Gr.8.Cohort.SP.D07,
+                             Gr.8.Cohort.SP.D08,
+                             Gr.8.Cohort.SP.D09,
+                             Gr.8.Cohort.SP.D10)
+Gr.8.Cohort.SP.All <- as.data.frame (Gr.8.Cohort.SP.All)
+Year <- as.Date (as.character (2003:2012), "%Y")
+Gr.8.Cohort.SP.All <- cbind (Year, Gr.8.Cohort.SP.All)
+
+#plot School Poverty by Deciles of 8 Grade Cohort
+p1 <- ggplot (Gr.8.Cohort.SP.All, aes (Year, Gr.8.Cohort.SP.D01))
+p1 <- p1 + geom_line ()
+p1 <- p1 + ylim (c(.65, .95))
+p1 <- p1 + geom_line (aes(Year, Gr.8.Cohort.SP.D10), colour = "green")
+p1 <- p1 + geom_line (aes (Year, Gr.8.Cohort.SP.D02), colour = "pink")
+p1 <- p1 + geom_line (aes (Year, Gr.8.Cohort.SP.D03), colour = "brown")
+p1 <- p1 + geom_line (aes (Year, Gr.8.Cohort.SP.D07), colour = "blue")
+p1 <- p1 + geom_line (aes (Year, Gr.8.Cohort.SP.D08), colour = "red")
+p1 <- p1 + geom_line (aes (Year, Gr.8.Cohort.SP.D09), colour = "yellow")
+p1
 #compare Grade 8
 Gr.8.Cohort.by.year <- tapply (cum$Gr.8.Cohort.KDE, INDEX = cum$Year, FUN = mean)
 Gr.8.Cohort.CP.D01 <-  tapply (CP.D01$Gr.8.Cohort.KDE, INDEX = CP.D01$Year, FUN = mean)
 Gr.8.Cohort.CP.D10 <-  tapply (CP.D10$Gr.8.Cohort.KDE, INDEX = CP.D10$Year, FUN = mean)
 Gr.8.Cohort.FRD.D01 <- tapply (FRD.D01$Gr.8.Cohort.KDE, INDEX = FRD.D01$Year, FUN = mean)
 Gr.8.Cohort.FRD.D10 <- tapply (FRD.D10$Gr.8.Cohort.KDE, INDEX = FRD.D10$Year, FUN = mean)
+Gr.8.Cohort.SP.D01 <-  tapply (SP.D01$Gr.8.Cohort.KDE, INDEX = SP.D01$Year, FUN = mean)
+Gr.8.Cohort.SP.D10 <-  tapply (SP.D10$Gr.8.Cohort.KDE, INDEX = SP.D10$Year, FUN = mean)
 
 #compare Grade 9
 Gr.9.Cohort.by.year <- tapply (cum$Gr.9.Cohort.KDE, INDEX = cum$Year, FUN = mean)
@@ -1395,14 +1612,17 @@ Gr.9.Cohort.CP.D01 <- tapply (CP.D01$Gr.9.Cohort.KDE, INDEX = CP.D01$Year, FUN =
 Gr.9.Cohort.CP.D10 <- tapply (CP.D10$Gr.9.Cohort.KDE, INDEX = CP.D10$Year, FUN = mean)
 Gr.9.Cohort.FRD.D01 <- tapply (FRD.D01$Gr.9.Cohort.KDE, INDEX = FRD.D01$Year, FUN = mean)
 Gr.9.Cohort.FRD.D10 <- tapply (FRD.D10$Gr.9.Cohort.KDE, INDEX = FRD.D10$Year, FUN = mean)
+Gr.9.Cohort.SP.D01 <-  tapply (SP.D01$Gr.9.Cohort.KDE, INDEX = SP.D01$Year, FUN = mean)
+Gr.9.Cohort.SP.D10 <- tapply (SP.D10$Gr.9.Cohort.KDE, INDEX = SP.D10$Year, FUN = mean)
 
 table <- rbind (Gr.8.Cohort.by.year, Gr.8.Cohort.CP.D01, Gr.8.Cohort.CP.D10, 
-                Gr.8.Cohort.FRD.D01, Gr.8.Cohort.FRD.D10, Gr.9.Cohort.by.year, 
-                Gr.9.Cohort.CP.D01, Gr.9.Cohort.CP.D10, Gr.9.Cohort.FRD.D01, 
-                Gr.9.Cohort.FRD.D10)
+                Gr.8.Cohort.FRD.D01, Gr.8.Cohort.FRD.D10, Gr.8.Cohort.SP.D01, 
+                Gr.8.Cohort.SP.D10, Gr.9.Cohort.by.year, Gr.9.Cohort.CP.D01, Gr.9.Cohort.CP.D10, 
+                Gr.9.Cohort.FRD.D01, Gr.9.Cohort.FRD.D10, Gr.9.Cohort.SP.D01, Gr.9.Cohort.SP.D10)
 table <- as.data.frame(t(table))
 Year <- row.names (table)
 table <- cbind (Year, table)
+table$Year <- levels (table$Year)
 table$Year <- as.Date (as.character (table$Year), "%Y")
 
 #Save as R object to load in later script
@@ -1433,7 +1653,7 @@ p1 <- ggplot (table, aes (x = Year, y= Gr.8.Cohort.by.year))
 table$Year <- as.Date (as.character (table$Year), "%Y")
 p1 <- p1 + layer (geom = "line", colour = "red")
 p1 <- p1 + ylim (c(.65, .95))
-p1 <- p1 + xlab("") + ylab("Pct.") + ggtitle("Kentucky \n 8th Grade Cohort")
+p1 <- p1 + xlab("") + ylab("Pct.") + ggtitle("Kentucky 8th Grade Cohort \n (Free & Reduced Lunch)")
 p1 <- p1 + geom_line (aes(Year, Gr.8.Cohort.FRD.D10))
 p1 <- p1 + geom_line (aes (Year, Gr.8.Cohort.FRD.D01))
 p1 <- p1 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
@@ -1442,6 +1662,38 @@ p1 <- p1 + annotate ("text", x = as.Date (as.character (2004), "%Y"),
                      y = .78, label = "Avg", size = 3.5, colour = "red")
 p1 <- p1 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
                      y = .7, label = "D10", size = 3.5)
+
+#plot for school district poverty rate
+p1.1 <- ggplot (table, aes (x = Year, y= Gr.8.Cohort.by.year))
+table$Year <- as.Date (as.character (table$Year), "%Y")
+p1.1 <- p1.1 + layer (geom = "line", colour = "red")
+p1.1 <- p1.1 + ylim (c(.65, .95))
+p1.1 <- p1.1 + xlab("") + ylab("Pct.") + ggtitle("Kentucky 8th Grade Cohort \n (School Poverty Rate)")
+p1.1 <- p1.1 + geom_line (aes (Year, Gr.8.Cohort.SP.D10))
+p1.1 <- p1.1 + geom_line (aes (Year, Gr.8.Cohort.SP.D01))
+p1.1 <- p1.1 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                     y = .9, label = "D01", size = 3.5)
+p1.1 <- p1.1 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                     y = .78, label = "Avg", size = 3.5, colour = "red")
+p1.1 <- p1.1 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                     y = .7, label = "D10", size = 3.5)
+
+#put both FRD and School Poverty on Chart
+p1.2 <- ggplot (table, aes (x = Year, y= Gr.8.Cohort.by.year))
+table$Year <- as.Date (as.character (table$Year), "%Y")
+p1.2 <- p1.2 + layer (geom = "line", colour = "red")
+p1.2 <- p1.2 + ylim (c(.65, .95))
+p1.2 <- p1.2 + xlab("") + ylab("Pct.") + ggtitle("Kentucky 8th Grade Cohort \n (School Poverty Rate)")
+p1.2 <- p1.2 + geom_line (aes (Year, Gr.8.Cohort.SP.D10), colour = "blue")
+p1.2 <- p1.2 + geom_line (aes (Year, Gr.8.Cohort.FRD.D10))
+p1.2 <- p1.2 + geom_line (aes (Year, Gr.8.Cohort.SP.D01), colour = "blue")
+p1.2 <- p1.2 + geom_line (aes (Year, Gr.8.Cohort.FRD.D01))
+p1.2 <- p1.2 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                         y = .9, label = "D01", size = 3.5)
+p1.2 <- p1.2 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                         y = .78, label = "Avg", size = 3.5, colour = "red")
+p1.2 <- p1.2 + annotate ("text", x = as.Date (as.character (2004), "%Y"), 
+                         y = .7, label = "D10", size = 3.5)
 
 
 p2 <- ggplot (table, aes (x = Year, y= Gr.9.Cohort.by.year))
@@ -1455,6 +1707,20 @@ p2 <- p2 + annotate ("text", x = as.Date (as.character (2003), "%Y"),
 p2 <- p2 + annotate ("text", x = as.Date (as.character (2003), "%Y"), 
                      y = .69, label = "Avg", size = 3.5, colour = "red")
 p2 <- p2 + annotate ("text", x = as.Date (as.character (2003), "%Y"), 
+                     y = .62, label = "D10", size = 3.5)
+
+#school poverty rate by 9th grade cohort
+p2.1 <- ggplot (table, aes (x = Year, y= Gr.9.Cohort.by.year))
+p2.1 <- p2.1 + layer (geom = "line", colour = "red")
+p2.1 <- p2.1 + ylim (c(.55, .95))
+p2.1 <- p2.1 + xlab("") + ylab("Pct.") + ggtitle("Kentucky 9th Grade Cohort \n (School Poverty Rate)")
+p2.1 <- p2.1 + geom_line (aes(Year, Gr.9.Cohort.SP.D10))
+p2.1 <- p2.1 + geom_line (aes (Year, Gr.9.Cohort.SP.D01))
+p2.1 <- p2.1 + annotate ("text", x = as.Date (as.character (2003), "%Y"), 
+                     y = .83, label = "D01", size = 3.5)
+p2.1 <- p2.1 + annotate ("text", x = as.Date (as.character (2003), "%Y"), 
+                     y = .69, label = "Avg", size = 3.5, colour = "red")
+p2.1 <- p2.1 + annotate ("text", x = as.Date (as.character (2003), "%Y"), 
                      y = .62, label = "D10", size = 3.5)
 
 p3 <- ggplot (table, aes (x = Year, y= Gr.9.Cohort.by.year))
@@ -1498,36 +1764,15 @@ p5 <- p5 + annotate ("text", x = as.Date (as.character (2004), "%Y"),
                      y = .77, label = "KY", size = 3.5, colour = "red")
 
 
-}
-
+p6 <- ggplot (cum, aes (x = School.Dist.Child.Poverty.Pct, y = Gr.8.Cohort.KDE))
+p6 <- p6 + geom_point ()
+p6 <- p6 + geom_point (aes (colour = factor (Year)))
+p6
+} #Clean this up next!
+Fig.MISSING   <- function (){
+#check absolute differences between 8th Graders and number of 
+#diploma recipients
 library (ggplot2)
-
-wd <- getwd()
-file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
-saar <- read.csv (file)
-Gr8E <- saar [, grep ("GR8E", names (saar))]
-Gr12E <- saar [, grep ("GR12E", names (saar))]
-TotGr8E <- colSums (Gr8E)
-TotGr12E <- colSums (Gr12E)
-Year <- as.Date (as.character (1999:2012), "%Y")
-E <- as.data.frame (cbind (Year, TotGr8E, TotGr12E))
-E$Year <- Year
-
-Missing <- E [5:14, 3] - E[1:10, 2]
-Missing <- c(rep(NA, 4), Missing)
-E <- cbind (E, Missing)
-
-
-p1 <- ggplot(E, aes (x = Year, y = TotGr8E))
-p1 <- p1 + geom_line ()
-p1 <- p1 + ylim (-10000, 0)
-p1 <- p1 + xlab ("Year") + ylab ("Missing Students") + ggtitle ("Difference Between 8th and 12th Grade
-                                                                Enrollments")
-p1 <- p1 + xlim (min (E[5,1]), max (E$Year))
-p1 <- p1 + geom_line (y = TotGr12E)
-p1 <- p1 + geom_line (y = Missing)
-p1
-
 wd <- getwd()
 file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
 saar <- read.csv (file)
@@ -1546,8 +1791,21 @@ gr <- gr [SCHNAME == "---DISTRICT TOTAL---", ]
 gr <- gr[, -2]
 detach (gr)
 
-Diplomas <- c(colSums (gr[, 2:6]), colSums (afgr[, 2:6 ]))
+Diplomas <- c(colSums (gr[, 2:6], na.rm = T), colSums (afgr[, 2:6 ]))
 Diplomas <- as.data.frame (Diplomas)
 row.names(Diplomas) <-  (paste ("Grad.w.Diploma.in.4.years", 2003:2012, "KDE", sep = "."))
-Year <- as.Date (as.character (2003:2012), "%Y")
+Year <- (2003:2012)
 Diplomas <- cbind (Year, Diplomas, Gr8E.tot)
+Diff <- Diplomas$Diplomas - Diplomas$Gr8E.tot
+Diplomas <- cbind (Diplomas, Diff)
+#plot
+p1 <- ggplot (Diplomas, aes(Year, Gr8E.tot))
+p1 <- p1 + geom_line ()
+p1 <- p1 + xlab("Year") + ylab("Students") + ggtitle ("Difference in 8th Grade Enrollments
+                                                      Diploma Recipients")
+p1 <- p1 + scale_x_continuous (limits = c(2003, 2012), breaks = seq(from = 2003, to = 2012, by = 2))
+p1 <- p1 + ylim(-17500, 60000)
+p1 <- p1 + geom_line (aes(Year, Diplomas))
+p1 <- p1 + geom_line (aes(Year, Diff), colour = "red")
+p1
+}
