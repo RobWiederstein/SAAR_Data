@@ -70,6 +70,11 @@ SAAR2012<-read.csv(paste (wd ,"/data sets/SAAR2012.csv", sep = ""), header=TRUE,
                    colClasses=c("character", "character", rep("integer", 15)), 
                    strip.white=TRUE)
 
+SAAR2013<-read.csv(paste (wd ,"/data sets/SAAR2013.csv", sep = ""), header=TRUE, sep=",", 
+                   blank.lines.skip=TRUE, fill=TRUE, skip=6,
+                   colClasses=c("character", "character", rep("integer", 15)), 
+                   strip.white=TRUE)
+
 #load libraries
 library("gdata", lib.loc="C:/Users/Cathy/R/win-library/3.0")
 
@@ -240,117 +245,136 @@ SAAR2012[164,1]<-"Walton Verona Independent"
 setdiff(district.index$DISTRICT, SAAR2012$DISTRICT) #Providence & Harrodsburg still missing
 setdiff(SAAR2012$DISTRICT, district.index$DISTRICT)
 
+#clean 2013
+temp <- subset(SAAR2013, (grepl("TOTALS", SAAR2013[,1])))
+temp[,1] <- sub("TOTALS for ", "",temp[,1])
+temp[,1] <- trim(temp[,1])
+temp <- temp[,c(1, 3:17)]
+SAAR2013 <- temp
+SAAR2013[143,1] <- "Raceland Independent"
+SAAR2013[163,1] <- "Walton Verona Independent"
+setdiff(district.index$DISTRICT, SAAR2013$DISTRICT) #Providence, Harrodsburg & Monticello
+                                                    #still missing
+setdiff(SAAR2013$DISTRICT, district.index$DISTRICT)
+
+
 #merge 1999
 
-SAAR.1999.2012<-merge(district.index, SAAR1999[, c(grep("DISTRICT", names(SAAR1999)),
+SAAR.1999.2013<-merge(district.index, SAAR1999[, c(grep("DISTRICT", names(SAAR1999)),
                                                    grep("X8", names(SAAR1999)), 
                                                    grep("X9", names(SAAR1999)), 
                                                    grep("X12", names(SAAR1999)),
                                                    grep ("TOTAL", names (SAAR1999)))], 
                       by="DISTRICT")
-class(SAAR.1999.2012[,1])
-SAAR.1999.2012[,1]<-as.character(SAAR.1999.2012[,1])
+class(SAAR.1999.2013[,1])
+SAAR.1999.2013[,1]<-as.character(SAAR.1999.2013[,1])
 #merge 2000
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2000[,c(grep("DISTRICT", names(SAAR2000)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2000[,c(grep("DISTRICT", names(SAAR2000)),
                                                   grep("X8", names(SAAR2000)), 
                                                   grep("X9", names(SAAR2000)), 
                                                   grep("X12", names(SAAR2000)),
                                                   grep("TOTAL", names (SAAR2000)))], 
                       by="DISTRICT")
 #merge 2001
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2001[,c(grep("DISTRICT", names(SAAR2001)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2001[,c(grep("DISTRICT", names(SAAR2001)),
                                                   grep("X8", names(SAAR2001)), 
                                                   grep("X9", names(SAAR2001)), 
                                                   grep("X12", names(SAAR2001)),
                                                   grep("TOTAL", names (SAAR2001)))], 
                       by="DISTRICT")
 #merge 2002
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2002[, c(grep("DISTRICT", names(SAAR2002)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2002[, c(grep("DISTRICT", names(SAAR2002)),
                                                    grep("X8", names(SAAR2002)), 
                                                    grep("X9", names(SAAR2002)), 
                                                    grep("X12", names(SAAR2002)),
                                                    grep("TOTAL", names(SAAR2002)))], 
                       by="DISTRICT")
 #merge 2003
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2003[, c(grep("DISTRICT", names(SAAR2003)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2003[, c(grep("DISTRICT", names(SAAR2003)),
                                                    grep("X8", names(SAAR2003)), 
                                                    grep("X9", names(SAAR2003)), 
                                                    grep("X12", names(SAAR2003)),
                                                    grep("TOTAL", names(SAAR2003)))], 
                       by="DISTRICT")
 #merge 2004
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2004[, c(grep("DISTRICT", names(SAAR2004)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2004[, c(grep("DISTRICT", names(SAAR2004)),
                                                    grep("X8", names(SAAR2004)), 
                                                    grep("X9", names(SAAR2004)), 
                                                    grep("X12", names(SAAR2004)),
                                                    grep("TOTAL", names(SAAR2004)))], 
                       by="DISTRICT")
 #merge 2005
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2005[, c(grep("DISTRICT", names(SAAR2005)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2005[, c(grep("DISTRICT", names(SAAR2005)),
                                                    grep("X8", names(SAAR2005)), 
                                                    grep("X9", names(SAAR2005)), 
                                                    grep("X12", names(SAAR2005)),
                                                    grep("TOTAL", names(SAAR2005)))], 
                       by="DISTRICT")
 #merge 2006--Drop Harrodsburg
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2006[, c(grep("DISTRICT", names(SAAR2006)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2006[, c(grep("DISTRICT", names(SAAR2006)),
                                                    grep("X8", names(SAAR2006)), 
                                                    grep("X9", names(SAAR2006)), 
                                                    grep("X12", names(SAAR2006)),
                                                    grep("TOTAL", names(SAAR2006)))], 
                       by="DISTRICT")
 #merge 2007--Drop Providence
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2007[, c(grep("DISTRICT", names(SAAR2007)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2007[, c(grep("DISTRICT", names(SAAR2007)),
                                                    grep("X8", names(SAAR2007)), 
                                                    grep("X9", names(SAAR2007)), 
                                                    grep("X12", names(SAAR2007)),
                                                    grep("TOTAL", names(SAAR2007)))], 
                       by="DISTRICT")
 #merge 2008
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2008[, c(grep("DISTRICT", names(SAAR2008)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2008[, c(grep("DISTRICT", names(SAAR2008)),
                                                    grep("X8", names(SAAR2008)), 
                                                    grep("X9", names(SAAR2008)), 
                                                    grep("X12", names(SAAR2008)),
                                                    grep("TOTAL", names (SAAR2008)))], 
                       by="DISTRICT")
 #merge 2009
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2009[, c(grep("DISTRICT", names(SAAR2009)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2009[, c(grep("DISTRICT", names(SAAR2009)),
                                                    grep("X8", names(SAAR2009)), 
                                                    grep("X9", names(SAAR2009)), 
                                                    grep("X12", names(SAAR2009)),
                                                    grep("TOTAL", names (SAAR2009)))], 
                       by="DISTRICT")
 #merge 2010
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2010[, c(grep("DISTRICT", names(SAAR2010)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2010[, c(grep("DISTRICT", names(SAAR2010)),
                                                    grep("X8", names(SAAR2010)), 
                                                    grep("X9", names(SAAR2010)), 
                                                    grep("X12", names(SAAR2010)),
                                                    grep("TOTAL", names(SAAR2010)))], 
                       by="DISTRICT")
 #merge 2011
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2011[, c(grep("DISTRICT", names(SAAR2011)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2011[, c(grep("DISTRICT", names(SAAR2011)),
                                                    grep("X8", names(SAAR2011)), 
                                                    grep("X9", names(SAAR2011)), 
                                                    grep("X12", names(SAAR2011)),
                                                    grep("TOTAL", names(SAAR2011)))], 
                       by="DISTRICT")
 #merge 2012
-SAAR.1999.2012<-merge(SAAR.1999.2012, SAAR2012[, c(grep("DISTRICT", names(SAAR2012)),
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2012[, c(grep("DISTRICT", names(SAAR2012)),
                                                    grep("X8", names(SAAR2012)), 
                                                    grep("X9", names(SAAR2012)), 
                                                    grep("X12", names(SAAR2012)),
                                                    grep("TOTAL", names(SAAR2012)))], 
                       by="DISTRICT")
-
+#merge 2013
+SAAR.1999.2013<-merge(SAAR.1999.2013, SAAR2013[, c(grep("DISTRICT", names(SAAR2013)),
+                                                   grep("X8", names(SAAR2013)), 
+                                                   grep("X9", names(SAAR2013)), 
+                                                   grep("X12", names(SAAR2013)),
+                                                   grep("TOTAL", names(SAAR2013)))], 
+                      by="DISTRICT")
 #name columns
 a<-c("GR8E", "GR9E", "GR12E", "TOTAL")
-names(SAAR.1999.2012) <- c("DISTRICT", paste(a, rep(1999:2012, each=4), "KDE", sep="."))
+names(SAAR.1999.2013) <- c("DISTRICT", paste(a, rep(1999:2013, each=4), "KDE", sep="."))
 rm(a)
 
 
 #Save as R object to load in later script
-saar.new <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
-write.table (SAAR.1999.2012, file = saar.new, sep = ",")
+saar.new <- paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/")
+write.table (SAAR.1999.2013, file = saar.new, sep = ",")
 }
 Clean.AFGR   <- function (){
 
