@@ -439,6 +439,69 @@ names(afgr.06.10)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2006:2010, "KDE", 
 afgr.new <- paste (wd, "objects", "afgr.06.10.csv", sep = "/")
 write.table (afgr.06.10, file = afgr.new, sep = ",")
 }
+Clean.GRAD   <- function (){
+  #Grad Rate 2003-2007 was sent via email from Kentucky Department of Education
+  #No longer available on website. Disaggregated by school district
+  
+  wd <- getwd()
+  file <- paste (wd, "data sets", "Grad Rate 2003-2007.csv", sep = "/")
+  gr <- read.csv (file = file, sep = ",", header = TRUE,
+                  strip.white = TRUE,
+                  colClasses = "character")
+  
+  #pull out columns for 4 year graduates
+  attach (gr)
+  gr <- gr [, c(4, 5, grep ("GRADS_4YR", names (gr)))]
+  gr <- gr [SCHNAME == "---DISTRICT TOTAL---", ]
+  gr <- gr [, -2]
+  detach (gr)
+  
+  names(gr)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2002:2006, "KDE", sep = ".")
+  
+  #Save as R object to load in later script
+  gr.new <- paste (wd, "objects", "gr.2002.2006.csv", sep = "/")
+  write.csv(gr, file = gr.new)
+}
+
+Clean.KYGR   <- function (){
+  #build table for Kentucky state-wide reported graduation rates
+  library (ggplot2)
+  wd <- getwd()
+  
+  #get grad rate data from KDE
+  file <- paste (wd, "data sets", "Grad Rate 2003-2007.csv", sep = "/")
+  gr <- read.csv (file, header = T, sep = ",", as.is = T,
+                  strip.white = T)
+  
+  #get afgr data from KDE
+  file <- paste (wd, "data sets", "AFGR_2012.csv", sep = "/")
+  afgr <- read.csv (file, header = T, sep = ",", as.is = T,
+                    strip.white = T)
+  
+  
+  # get state totals for 2003-2007
+  gr <- gr[gr$DISTNAME == "STATE", ]
+  gr <- gr [, grep ("GRAD_", names (gr))]
+  
+  #get state totals for 2007 to 2012
+  afgr <- afgr [afgr$School.Name == "STATE TOTAL" & afgr$Gender == "Total" & 
+                  afgr$Ethnicity == "Total", c(1, 5, 19)]
+  
+  #combine in new table for 2003:2012
+  Year <- 2003:2012
+  State <- rep ("KY", 10)
+  Reported <- (c(as.numeric (gr[1, 1:5]), as.numeric (afgr[,3]))) / 100
+  Method <- c(rep ("NA", 5), rep ("AFGR", 5))
+  Ky.grad.rate <- (cbind (Year, State, Reported, Method))
+  Ky.grad.rate <- as.data.frame (Ky.grad.rate, row.names = 1:10, stringsAsFactors = F)
+  Ky.grad.rate$Year <- as.Date (Ky.grad.rate$Year, "%Y")
+  Ky.grad.rate$Reported <- as.numeric (Ky.grad.rate$Reported)
+  
+  #Save as R object to load in later script
+  file <- paste (wd, "objects", "State.grad.rate.2003.2012.KDE.csv", sep = "/")
+  write.table (Ky.grad.rate, file = file, sep = ",")
+}
+
 Clean.ELSI   <- function (){
   #ELSI Cleanup Script
   wd <- getwd()
@@ -517,65 +580,6 @@ le <- cbind (le, FRD_LUNCH_PCT)
 #Save as R object to load in later script
 file <- paste (wd, "objects", "FRD.Lunch.Pct.2012.KDE.csv", sep = "/")
 write.table (le, file = file, sep = ",")
-}
-Clean.GRAD   <- function (){
-#Grad Rate 2003-2007 was sent via email from Kentucky Department of Education
-#No longer available on website. Disaggregated by school district
-
-wd <- getwd()
-file <- paste (wd, "data sets", "Grad Rate 2003-2007.csv", sep = "/")
-gr <- read.csv (file = file, sep = ",", header = TRUE,
-                strip.white = TRUE,
-                colClasses = "character")
-
-#pull out columns for 4 year graduates
-attach (gr)
-gr <- gr [, c(4, 5, grep ("GRADS_4YR", names (gr)))]
-gr <- gr [SCHNAME == "---DISTRICT TOTAL---", ]
-gr <- gr [, -2]
-detach (gr)
-
-#Save as R object to load in later script
-gr.new <- paste (wd, "objects", "gr.2003.2007.csv", sep = "/")
-write.csv(gr, file = gr.new)
-}
-Clean.KYGR   <- function (){
-#build table for Kentucky state-wide reported graduation rates
-library (ggplot2)
-wd <- getwd()
-
-#get grad rate data from KDE
-file <- paste (wd, "data sets", "Grad Rate 2003-2007.csv", sep = "/")
-gr <- read.csv (file, header = T, sep = ",", as.is = T,
-                strip.white = T)
-
-#get afgr data from KDE
-file <- paste (wd, "data sets", "AFGR_2012.csv", sep = "/")
-afgr <- read.csv (file, header = T, sep = ",", as.is = T,
-                  strip.white = T)
-
-
-# get state totals for 2003-2007
-gr <- gr[gr$DISTNAME == "STATE", ]
-gr <- gr [, grep ("GRAD_", names (gr))]
-
-#get state totals for 2007 to 2012
-afgr <- afgr [afgr$School.Name == "STATE TOTAL" & afgr$Gender == "Total" & 
-                   afgr$Ethnicity == "Total", c(1, 5, 19)]
-
-#combine in new table for 2003:2012
-Year <- 2003:2012
-State <- rep ("KY", 10)
-Reported <- (c(as.numeric (gr[1, 1:5]), as.numeric (afgr[,3]))) / 100
-Method <- c(rep ("NA", 5), rep ("AFGR", 5))
-Ky.grad.rate <- (cbind (Year, State, Reported, Method))
-Ky.grad.rate <- as.data.frame (Ky.grad.rate, row.names = 1:10, stringsAsFactors = F)
-Ky.grad.rate$Year <- as.Date (Ky.grad.rate$Year, "%Y")
-Ky.grad.rate$Reported <- as.numeric (Ky.grad.rate$Reported)
-
-#Save as R object to load in later script
-file <- paste (wd, "objects", "State.grad.rate.2003.2012.KDE.csv", sep = "/")
-write.table (Ky.grad.rate, file = file, sep = ",")
 }
 Clean.SDCP   <- function (){
 #http://www.census.gov/did/www/saipe/data/schools/index.html
