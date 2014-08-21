@@ -377,12 +377,15 @@ saar.new <- paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/")
 write.table (SAAR.1999.2013, file = saar.new, sep = ",")
 }
 Clean.AFGR   <- function (){
+#AFGR data is for 2008-2012.
+#David Curd with KDE advised that AFGR data is lagged one year.
+#2012 data would be for 2010-11 School Year
+#KDE's naming convention is to refer to the second year of the 2010-11 school year.
 
 wd <- getwd()
-file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+file <- paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/")
 saar <- read.table (file, header = TRUE, sep = ",")
 
-wd <- getwd()
 AFGR <- read.csv(file = paste (wd, "data sets", "AFGR_2012.csv", sep = "/"), 
                  sep = ",", 
                  header = TRUE,
@@ -390,17 +393,18 @@ AFGR <- read.csv(file = paste (wd, "data sets", "AFGR_2012.csv", sep = "/"),
                  colClasses = "character")
 attach (AFGR)
 
-#Diploma Recipients from KDE (DR.**) by year
-DR.08<- AFGR[ which(Gender=='Total' & Ethnicity=='Total' & School.Name == 'DISTRICT TOTAL' & School.Year == '2008'), c (1, 5, 10)]
-DR.09<- AFGR[ which(Gender=='Total' & Ethnicity=='Total' & School.Name == 'DISTRICT TOTAL' & School.Year == '2009'), c (1, 5, 10)]
-DR.10<- AFGR[ which(Gender=='Total' & Ethnicity=='Total' & School.Name == 'DISTRICT TOTAL' & School.Year == '2010'), c (1, 5, 10)]
-DR.11<- AFGR[ which(Gender=='Total' & Ethnicity=='Total' & School.Name == 'DISTRICT TOTAL' & School.Year == '2011'), c (1, 5, 10)]
-DR.12<- AFGR[ which(Gender=='Total' & Ethnicity=='Total' & School.Name == 'DISTRICT TOTAL' & School.Year == '2012'), c (1, 5, 10)]   
+#Diploma Recipients from KDE (DR.**) by year.  Because 1 yr lag, 2012 is for 2010-2011 school year.
+#Code uses first year of school year, contrary to KDE naming conventions
+DR.06 <- AFGR[ which(Gender=='Total' & Ethnicity=='Total' & School.Name == 'DISTRICT TOTAL' & School.Year == '2008'), c (1, 5, 10)]
+DR.07 <- AFGR[ which(Gender=='Total' & Ethnicity=='Total' & School.Name == 'DISTRICT TOTAL' & School.Year == '2009'), c (1, 5, 10)]
+DR.08 <- AFGR[ which(Gender=='Total' & Ethnicity=='Total' & School.Name == 'DISTRICT TOTAL' & School.Year == '2010'), c (1, 5, 10)]
+DR.09 <- AFGR[ which(Gender=='Total' & Ethnicity=='Total' & School.Name == 'DISTRICT TOTAL' & School.Year == '2011'), c (1, 5, 10)]
+DR.10 <- AFGR[ which(Gender=='Total' & Ethnicity=='Total' & School.Name == 'DISTRICT TOTAL' & School.Year == '2012'), c (1, 5, 10)]   
 rm (AFGR)
 detach (AFGR)
 
 #create a common column for merge with SAAR data
-b <- DR.08$District.Name
+b <- DR.06$District.Name
 b[84]  <- "Jefferson County"
 b[91]  <- "LaRue County"
 b[110] <- "McCracken County"
@@ -410,35 +414,35 @@ b[142] <- "Raceland Independent"
 b[160] <- "Walton Verona Independent"
 
 #assign common column to DR.** for merge
+DR.06[,2] <- b
+DR.07[,2] <- b
 DR.08[,2] <- b
 DR.09[,2] <- b
 DR.10[,2] <- b
-DR.11[,2] <- b
-DR.12[,2] <- b
 
 #assign common column name "DISTRICT"
+names(DR.06)[2] <- "DISTRICT"
+names(DR.07)[2] <- "DISTRICT"
 names(DR.08)[2] <- "DISTRICT"
 names(DR.09)[2] <- "DISTRICT"
 names(DR.10)[2] <- "DISTRICT"
-names(DR.11)[2] <- "DISTRICT"
-names(DR.12)[2] <- "DISTRICT"
 
 #merge
-afgr.08.12 <- merge(DR.08, DR.09, by = "DISTRICT")
-afgr.08.12 <- merge(afgr.08.12, DR.10, by = "DISTRICT")
-afgr.08.12 <- merge(afgr.08.12, DR.11, by = "DISTRICT")
-afgr.08.12 <- merge(afgr.08.12, DR.12, by = "DISTRICT")
-afgr.08.12 <- afgr.08.12[, c(1,3,5,7,9,11)]
-names(afgr.08.12)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2008:2012, "KDE", sep = ".")
+afgr.06.10 <- merge(DR.06, DR.07, by = "DISTRICT")
+afgr.06.10 <- merge(afgr.06.10, DR.08, by = "DISTRICT")
+afgr.06.10 <- merge(afgr.06.10, DR.09, by = "DISTRICT")
+afgr.06.10 <- merge(afgr.06.10, DR.10, by = "DISTRICT")
+afgr.06.10 <- afgr.06.10 [, c(1,3,5,7,9,11)]
+names(afgr.06.10)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2006:2010, "KDE", sep = ".")
 
 #Save as R object to load in later script
-afgr.new <- paste (wd, "objects", "afgr.08.12.csv", sep = "/")
-write.table (afgr.08.12, file = afgr.new, sep = ",")
+afgr.new <- paste (wd, "objects", "afgr.06.10.csv", sep = "/")
+write.table (afgr.06.10, file = afgr.new, sep = ",")
 }
 Clean.ELSI   <- function (){
   #ELSI Cleanup Script
   wd <- getwd()
-  file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+  file <- paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/")
   saar <- read.table (file, header = TRUE, sep = ",",
                       colClasses = "character")
   
