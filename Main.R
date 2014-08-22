@@ -375,7 +375,7 @@ rm(a)
 #Save as R object to load in later script
 saar.new <- paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/")
 write.table (SAAR.1999.2013, file = saar.new, sep = ",")
-}
+}     #Superintendant Annual Attendance Report from KDE
 Clean.GRAD   <- function (){
   #Grad Rate 2003-2007 was sent via email from Kentucky Department of Education
   #No longer available on website. Disaggregated by school district
@@ -385,6 +385,10 @@ Clean.GRAD   <- function (){
   gr <- read.csv (file = file, sep = ",", header = TRUE,
                   strip.white = TRUE,
                   colClasses = "character")
+  file <- paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/")
+  saar <- read.csv (file = file, sep = ",", header = T,
+                    strip.white = T,
+                    colClasses = "character")
   
   #pull out columns for 4 year graduates
   attach (gr)
@@ -394,11 +398,14 @@ Clean.GRAD   <- function (){
   detach (gr)
   
   names(gr)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2002:2006, "KDE", sep = ".")
+  names(gr)[1]   <- "DISTRICT"
+  gr[grep ("Walton", gr$DISTRICT),1] <- "Walton Verona Independent"
+
   
   #Save as R object to load in later script
   gr.new <- paste (wd, "objects", "gr.2002.2006.csv", sep = "/")
   write.csv(gr, file = gr.new)
-}
+}     #Graduation Rate Data 2003-2007 from KDE
 Clean.AFGR   <- function (){
 #AFGR data is for 2008-2012.
 #David Curd with KDE advised that AFGR data is lagged one year.
@@ -459,9 +466,9 @@ afgr.07.11 <- afgr.07.11 [, c(1,3,5,7,9,11)]
 names(afgr.07.11)[2:6] <- paste ("Grad.w.Diploma.in.4.years", 2007:2011, "KDE", sep = ".")
 
 #Save as R object to load in later script
-afgr.new <- paste (wd, "objects", "afgr.07.10.csv", sep = "/")
+afgr.new <- paste (wd, "objects", "afgr.07.11.csv", sep = "/")
 write.table (afgr.07.11, file = afgr.new, sep = ",")
-}
+}     #Average Freshmen Graduation Rate 2008-2012 from KDE
 Clean.AGRC   <- function (){
 #http://applications.education.ky.gov/SRC/DataSets.aspx
 #2012-2013 Diploma Recipients w/i 4 years
@@ -472,7 +479,14 @@ agrc <- read.csv (file, header = T, sep = ",", as.is = T,
 agrc <- agrc [agrc$DISAGG_ORDER == "0" & agrc$SCH_NAME == "--District Total--",]
 agrc <- agrc [, c(1, 4, 8)]
 names(agrc)[3] <- paste ("Grad.w.Diploma.in.4.years", 2012, "KDE", sep = ".")
-}
+names (agrc)[2] <- "DISTRICT"
+agrc$DISTRICT[142] <- "Raceland Independent"
+agrc$DISTRICT[160] <- "Walton Verona Independent"
+
+#Save as R object to load in later script
+agrc.new <- paste (wd, "objects", "agrc.12.csv", sep = "/")
+write.table (agrc, file = agrc.new, sep = ",")
+}     #Accountability Graduation Rate Cohort 2013 from KDE
 Clean.KYGR   <- function (){
   #build table for Kentucky state-wide reported graduation rates
   #no computation--pulled Ky's number from KDE data
@@ -522,7 +536,7 @@ Clean.KYGR   <- function (){
   #Save as R object to load in later script
   file <- paste (wd, "objects", "State.grad.rate.2002.2012.KDE.csv", sep = "/")
   write.table (Ky.grad.rate, file = file, sep = ",")
-}
+}     #Kentucky Reported Graduation Rate
 Clean.ELSI   <- function (){
   #ELSI Cleanup Script
   wd <- getwd()
@@ -565,7 +579,7 @@ Clean.ELSI   <- function (){
   #Save as R object to load in later script
   elsi.new <- paste(wd, "objects", "elsi_new.csv", sep = "/")
   write.table (elsi, file = elsi.new, sep = ",")
-}
+}     #Elementary Secondary from CCD
 Clean.FRDL   <- function (){
 #need the free and reduced lunch for 2012.  KDE website for school report card
 
@@ -596,18 +610,20 @@ names (le)[2] <- "DISTRICT"
 ENROLLMENT_FRD_CNT <- le$ENROLLMENT_FREE_LUNCH_CNT + le$ENROLLMENT_REDUCED_LUNCH_CNT
 FRD_LUNCH_PCT <- ENROLLMENT_FRD_CNT / le$ENROLLMENT_TOTAL
 le <- cbind (le, FRD_LUNCH_PCT)
-
+le$DISTRICT <- sub ("Raceland-Worthington Independent", "Raceland Independent", le$DISTRICT)
+le$DISTRICT <- sub ("Walton-Verona Independent", "Walton Verona Independent", le$DISTRICT)
 
 #Save as R object to load in later script
 file <- paste (wd, "objects", "FRD.Lunch.Pct.2012.KDE.csv", sep = "/")
 write.table (le, file = file, sep = ",")
-}
+}     #Free and Reduced Lunch from ELSI and KDE
 Clean.SDCP   <- function (){
 #http://www.census.gov/did/www/saipe/data/schools/index.html
+#SDCP = School District Child Poverty
 #Poverty rates by school district b/c FRL crude
 #get saar and subset to index
 wd <-getwd()
-file  <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+file  <- paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/")
 saar <- read.csv (file, as.is = T)
 index <- as.data.frame (saar[,1])
 names (index) <- "DISTRICT"
@@ -862,14 +878,21 @@ sd12$DISTRICT[166] <- "Walton Verona Independent"
 
 sdcp <- merge (sdcp, sd12)
 
+#Need 2013.  Not available as of August 21, 2014.
+#http://www.census.gov/did/www/saipe/data/schools/index.html
+#used 2012 for 2013
+sd13 <- sd12
+names (sd13) <- gsub ("2012", "2013", names (sd13))
+sdcp <- merge (sdcp, sd13)
+
 #pull out percentages
 sdcp <- sdcp[, c(1, grep ("PCT", names (sdcp)))]
 
 #save in objects
 wd <- getwd()
-file <- paste (wd, "objects", "Child.Poverty.by.School.District.Census.2003.2012.csv", sep = "/")
+file <- paste (wd, "objects", "Child.Poverty.by.School.District.Census.2003.2013.csv", sep = "/")
 write.csv (sdcp, file)
-}
+}     #School District Child Poverty from U.S. Census
 Build.CUM    <- function (){
 #load all cleaned up objects for a build
 #library
@@ -877,21 +900,19 @@ library (ggplot2)
 
 #load objects
 wd <- getwd()
-
-saar <- read.csv (paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/"), 
+saar <- read.csv (paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/"), 
                   sep = ",", header = T, as.is = TRUE)
-afgr <- read.csv (paste (wd, "objects", "afgr.08.12.csv", sep = "/"),
+gr   <- read.csv (paste (wd, "objects", "gr.2002.2006.csv", sep = "/" ),
+                  sep = ",", header = T, as.is = TRUE)
+afgr <- read.csv (paste (wd, "objects", "afgr.07.11.csv", sep = "/"),
+                  sep = ",", header = T, as.is = TRUE)
+agrc <- read.csv (paste (wd, "objects", "agrc.12.csv", sep = "/"),
                   sep = ",", header = T, as.is = TRUE)
 elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
                   sep = ",", header = T, as.is = TRUE)
-cp   <- read.csv (paste (wd, "objects", "tot.cp.2001.2012.csv", sep = "/" ),
-                sep = ",", header = T, as.is = TRUE)
-gr   <- read.csv (paste (wd, "objects", "gr.2003.2007.csv", sep = "/" ),
-                sep = ",", header = T, as.is = TRUE)
 frd  <- read.csv (paste (wd, "objects", "FRD.Lunch.Pct.2012.KDE.csv", sep = "/" ),
                  sep = ",", header = T, as.is = TRUE)
-
-sdcp <- read.csv (paste (wd, "objects", "Child.Poverty.by.School.District.Census.2003.2012.csv", sep = "/"),
+sdcp <- read.csv (paste (wd, "objects", "Child.Poverty.by.School.District.Census.2003.2013.csv", sep = "/"),
                   sep = ",", header = T, as.is = TRUE)
 
 #really small schools with 8 grade enrollment, but no 12th grade
@@ -903,44 +924,74 @@ exclude.schools <- saar [DISTRICT == "Anchorage Independent" |
                               DISTRICT == "Southgate Independent" |
                               DISTRICT == "West Point Independent",]
 detach (saar)
-
+exclude.school.eighth.grade.2013 <- sum (exclude.schools$GR8E.2013.KDE)/sum (saar$GR8E.2013.KDE)
+rm (exclude.schools)
 #fix new index so lengths of data frames are equal
 index <- as.data.frame (afgr$DISTRICT, stringsAsFactors = FALSE)
 names (index) <- "DISTRICT"
+index <- as.data.frame (index[-grep ("Monticello", index$DISTRICT), ]) #Monticello to merge with Wayne
+names (index) <- "DISTRICT"
 elsi <- merge (index, elsi)
 saar <- merge (index, saar)
-gr <- gr[, -1]
-names (gr)[1] <- "DISTRICT"
-gr[161,1] <- "Walton Verona Independent" #eliminate hyphen
-gr <- merge (index, gr)
-frd$DISTRICT <- sub ("Raceland-Worthington Independent", "Raceland Independent", frd$DISTRICT)
-frd$DISTRICT <- sub ("Walton-Verona Independent", "Walton Verona Independent", frd$DISTRICT)
-frd <- merge (index, frd)
+gr   <- merge (index, gr)
+afgr <- merge (index, afgr)
+agrc <- merge (index, agrc)
+frd  <- merge (index, frd)
 sdcp <- merge (index, sdcp)
+
+#2013--Need the agrc data for school year 2013-2014.
+#to be released in Sept, 2014.
+#District <- index
+#Year <- rep (2013, 168)
+#Tot.Enrollment.saar <- saar$TOTAL.2013.KDE
+#Tot.Enrollment.elsi <- rep (NA, 168)
+#FRD.Lunch.Pct <- frd$FRD_LUNCH_PCT                   #taken from 2012-2013 KDE school report card
+#FRD.Decile <- cut_number(FRD.Lunch.Pct, n = 10)
+#levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+#Gr.8.Cohort.KDE <- agrc$Grad.w.Diploma.in.4.years.2012.KDE /
+#  saar$GR8E.2007.KDE
+#Gr.9.Cohort.KDE <- agrc$Grad.w.Diploma.in.4.years.2012.KDE /
+#  saar$GR9E.2008.KDE
+#Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2012.KDE / 
+#  saar$GR8E.2007.KDE
+#Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2012.KDE /
+#  saar$GR9E.2008.KDE
+#tot.2012 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
+#                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+#                   Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
+
+#add census data
+#School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2012
+#School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
+#levels (School.Dist.Child.Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
+#tot.2012 <- cbind (tot.2012, School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+#rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
+##end census data
+
+#rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
+#     FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
+#     Gr.12.Gr.9.ratio.KDE)
 
 #2012
 District <- index
-Year <- rep (2012, 169)
+Year <- rep (2012, 168)
 Tot.Enrollment.saar <- saar$TOTAL.2012.KDE
-Tot.Enrollment.elsi <- rep (NA, 169)
-FRD.Lunch.Pct <- frd$FRD_LUNCH_PCT                   #taken from KDE school report card
+Tot.Enrollment.elsi <- rep (NA, 168)
+FRD.Lunch.Pct <- frd$FRD_LUNCH_PCT                   #taken from 2012-2013 KDE school report card
 FRD.Decile <- cut_number(FRD.Lunch.Pct, n = 10)
 levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Child.Poverty.Pct <- cp$cp.2012.AEC
-Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Gr.8.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2012.KDE /
+Gr.8.Cohort.KDE <- agrc$Grad.w.Diploma.in.4.years.2012.KDE /
      saar$GR8E.2007.KDE
-Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2012.KDE /
+Gr.9.Cohort.KDE <- agrc$Grad.w.Diploma.in.4.years.2012.KDE /
      saar$GR9E.2008.KDE
 Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2012.KDE / 
      saar$GR8E.2007.KDE
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2012.KDE /
      saar$GR9E.2008.KDE
 tot.2012 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-                   FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-                   Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-                   Gr.12.Gr.9.ratio.KDE)
+                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+                   Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
+
 #add census data
 School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2012
 School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
@@ -950,22 +1001,18 @@ rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
 #end census data
 
 rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-     FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-     Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
+     FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
      Gr.12.Gr.9.ratio.KDE)
 
 #2011
 District <- index
-Year <- rep (2011, 169)
+Year <- rep (2011, 168)
 Tot.Enrollment.saar <- saar$TOTAL.2011.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2011.12
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2011.12) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2011.12)
 FRD.Decile <- cut_number (FRD.Lunch.Pct, n= 10)
 levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Child.Poverty.Pct <- cp$cp.2011.AEC
-Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2011.KDE / 
      saar$GR8E.2006.KDE
 Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2011.KDE / 
@@ -977,9 +1024,8 @@ Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2011.KDE /
 
 
 tot.2011 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-                   FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-                   Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-                   Gr.12.Gr.9.ratio.KDE)
+                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+                   Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 #add census data
 School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2011
@@ -990,22 +1036,18 @@ rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
 #end census data
 
 rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-     FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-     Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-     Gr.12.Gr.9.ratio.KDE)
+     FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+     Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 #2010
 District <- index
-Year <- rep (2010, 169)
+Year <- rep (2010, 168)
 Tot.Enrollment.saar <- saar$TOTAL.2010.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2010.11
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2010.11) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2010.11)
 FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
 levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Child.Poverty.Pct <- cp$cp.2010.AEC
-Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2010.KDE / 
      saar$GR8E.2005.KDE
 Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2010.KDE / 
@@ -1016,8 +1058,8 @@ Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2010.KDE /
      saar$GR9E.2006.KDE
 
 tot.2010 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-                   FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-                   Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
+                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+                   Gr.12.Gr.8.ratio.KDE, 
                    Gr.12.Gr.9.ratio.KDE)
 
 #add census data
@@ -1029,22 +1071,18 @@ rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
 #end census data
 
 rm    (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-       FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-       Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-       Gr.12.Gr.9.ratio.KDE)
+       FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+       Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 #2009
 District <- index
-Year <-rep (2009, 169)
+Year <-rep (2009, 168)
 Tot.Enrollment.saar <- saar$TOTAL.2009.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2009.10
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2009.10) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2009.10)
 FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
 levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Child.Poverty.Pct <- cp$cp.2009.AEC
-Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2009.KDE / 
      saar$GR8E.2004.KDE
 Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2009.KDE / 
@@ -1053,9 +1091,8 @@ Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2009.KDE / saar$GR8E.2004.KDE
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2009.KDE / saar$GR9E.2005.KDE
 
 tot.2009 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-                   FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-                   Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-                   Gr.12.Gr.9.ratio.KDE)
+                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+                   Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 #add census data
 School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2009
 School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
@@ -1065,22 +1102,18 @@ rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
 #end census data
 
 rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-     FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-     Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-     Gr.12.Gr.9.ratio.KDE)
+     FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+     Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 #2008
 District <- index
-Year <-rep (2008, 169)
+Year <-rep (2008, 168)
 Tot.Enrollment.saar <- saar$TOTAL.2008.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2008.09
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2008.09) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2008.09)
 FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
 levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Child.Poverty.Pct <- cp$cp.2008.AEC
-Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
 Gr.8.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2008.KDE / 
      saar$GR8E.2003.KDE
 Gr.9.Cohort.KDE <- afgr$Grad.w.Diploma.in.4.years.2008.KDE / 
@@ -1089,9 +1122,8 @@ Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2008.KDE / saar$GR8E.2003.KDE
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2008.KDE / saar$GR9E.2004.KDE
 
 tot.2008 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-                   FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-                   Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-                   Gr.12.Gr.9.ratio.KDE)
+                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+                   Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 #add census data
 School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2008
 School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
@@ -1101,32 +1133,27 @@ rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
 #end census data
 
 rm  (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-     FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-     Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-     Gr.12.Gr.9.ratio.KDE)
+     FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+     Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 
 #2007
 District <- index
-Year <-rep (2007, 169)
+Year <-rep (2007, 168)
 Tot.Enrollment.saar <- saar$TOTAL.2007.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2007.08
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2007.08) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2007.08)
 FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
 levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Child.Poverty.Pct <- cp$cp.2007.AEC
-Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Gr.8.Cohort.KDE <- as.integer (gr$GRADS_4YR_07) / saar$GR8E.2002.KDE 
-Gr.9.Cohort.KDE <- as.integer (gr$GRADS_4YR_07) / saar$GR9E.2003.KDE
+Gr.8.Cohort.KDE <- as.integer (afgr$Grad.w.Diploma.in.4.years.2007.KDE) / saar$GR8E.2002.KDE 
+Gr.9.Cohort.KDE <- as.integer (afgr$Grad.w.Diploma.in.4.years.2007.KDE) / saar$GR9E.2003.KDE
 Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2007.KDE / saar$GR8E.2002.KDE
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2007.KDE / saar$GR9E.2003.KDE
 
 tot.2007 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-                   FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-                   Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-                   Gr.12.Gr.9.ratio.KDE)
+                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+                   Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 #add census data
 School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2007
 School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
@@ -1136,31 +1163,26 @@ rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
 #end census data
 
 rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-      Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-      Gr.12.Gr.9.ratio.KDE)
+      FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+      Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 #2006
 District <- index
-Year <-rep (2006, 169)
+Year <-rep (2006, 168)
 Tot.Enrollment.saar <- saar$TOTAL.2006.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2006.07
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2006.07) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2006.07)
 FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
 levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Child.Poverty.Pct <- cp$cp.2006.AEC
-Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Gr.8.Cohort.KDE <- as.integer (gr$GRADS_4YR_06) / saar$GR8E.2001.KDE 
-Gr.9.Cohort.KDE <- as.integer (gr$GRADS_4YR_06) / saar$GR9E.2002.KDE
+Gr.8.Cohort.KDE <- as.integer (gr$Grad.w.Diploma.in.4.years.2006.KDE) / saar$GR8E.2001.KDE 
+Gr.9.Cohort.KDE <- as.integer (gr$Grad.w.Diploma.in.4.years.2006.KDE) / saar$GR9E.2002.KDE
 Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2006.KDE / saar$GR8E.2001.KDE
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2006.KDE / saar$GR9E.2002.KDE
 
 tot.2006 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-                   FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-                   Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-                   Gr.12.Gr.9.ratio.KDE)
+                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+                   Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 #add census data
 School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2006
@@ -1171,31 +1193,26 @@ rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
 #end census data
 
 rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-      Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-      Gr.12.Gr.9.ratio.KDE)
+      FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+      Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 #2005
 District <- index
-Year <-rep (2005, 169)
+Year <-rep (2005, 168)
 Tot.Enrollment.saar <- saar$TOTAL.2005.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2005.06
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2005.06) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2005.06)
 FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
 levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Child.Poverty.Pct <- cp$cp.2005.AEC
-Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Gr.8.Cohort.KDE <- as.integer (gr$GRADS_4YR_05) / saar$GR8E.2000.KDE 
-Gr.9.Cohort.KDE <- as.integer (gr$GRADS_4YR_05) / saar$GR9E.2001.KDE
+Gr.8.Cohort.KDE <- as.integer (gr$Grad.w.Diploma.in.4.years.2005.KDE) / saar$GR8E.2000.KDE 
+Gr.9.Cohort.KDE <- as.integer (gr$Grad.w.Diploma.in.4.years.2005.KDE) / saar$GR9E.2001.KDE
 Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2005.KDE / saar$GR8E.2000.KDE
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2005.KDE / saar$GR9E.2001.KDE
 
 tot.2005 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-                   FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-                   Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-                   Gr.12.Gr.9.ratio.KDE)
+                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+                   Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 #add census data
 School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2005
@@ -1206,31 +1223,26 @@ rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
 #end census data
 
 rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-      Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-      Gr.12.Gr.9.ratio.KDE)
+      FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+      Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 #2004
 District <- index
-Year <-rep (2004, 169)
+Year <-rep (2004, 168)
 Tot.Enrollment.saar <- saar$TOTAL.2004.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2004.05
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2005.06) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2005.06) ##wrong years!! Data imputation?
 FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
 levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Child.Poverty.Pct <- cp$cp.2004.AEC
-Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Gr.8.Cohort.KDE <- as.integer (gr$GRADS_4YR_04) / saar$GR8E.1999.KDE 
-Gr.9.Cohort.KDE <- as.integer (gr$GRADS_4YR_04) / saar$GR9E.2000.KDE
+Gr.8.Cohort.KDE <- as.integer (gr$Grad.w.Diploma.in.4.years.2004.KDE) / saar$GR8E.1999.KDE 
+Gr.9.Cohort.KDE <- as.integer (gr$Grad.w.Diploma.in.4.years.2004.KDE) / saar$GR9E.2000.KDE
 Gr.12.Gr.8.ratio.KDE <- saar$GR12E.2004.KDE / saar$GR8E.1999.KDE
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2004.KDE / saar$GR9E.2000.KDE
 
 tot.2004 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-                   FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-                   Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-                   Gr.12.Gr.9.ratio.KDE)
+                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+                   Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 #add census data
 School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2004
 School.Dist.Child.Poverty.Decile <- cut_number (School.Dist.Child.Poverty.Pct, n = 10)
@@ -1240,32 +1252,27 @@ rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
 #end census data
 
 rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-      Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-      Gr.12.Gr.9.ratio.KDE)
+      FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+      Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 
 #2003
 District <- index
-Year <-rep (2003, 169)
+Year <-rep (2003, 168)
 Tot.Enrollment.saar <- saar$TOTAL.2003.KDE
 Tot.Enrollment.elsi <- elsi$Total.Students..UG.PK.12...District..2003.04
 FRD.Lunch.Pct <-  as.integer (elsi$Total.Free.and.Reduced.Lunch.Students..Public.School..2005.06) / 
      as.integer (elsi$Total.Students..UG.PK.12...District..2005.06) ##wrong years!! Data imputation?
 FRD.Decile <- cut_number (FRD.Lunch.Pct, n = 10)
 levels (FRD.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Child.Poverty.Pct <- cp$cp.2003.AEC
-Poverty.Decile <- cut_number(Child.Poverty.Pct, n = 10)
-levels (Poverty.Decile) <- c(paste ("D0", 1:9, sep = ""), "D10")
-Gr.8.Cohort.KDE <- rep (NA, 169) #no saar$GR8E.1998 
-Gr.9.Cohort.KDE <- as.integer (gr$GRADS_4YR_03) / saar$GR9E.1999.KDE
-Gr.12.Gr.8.ratio.KDE <- rep (NA, 169) #no saar$GR8E.1998
+Gr.8.Cohort.KDE <- rep (NA, 168) #no saar$GR8E.1998 
+Gr.9.Cohort.KDE <- as.integer (gr$Grad.w.Diploma.in.4.years.2003.KDE) / saar$GR9E.1999.KDE
+Gr.12.Gr.8.ratio.KDE <- rep (NA, 168) #no saar$GR8E.1998
 Gr.12.Gr.9.ratio.KDE <- saar$GR12E.2003.KDE / saar$GR9E.1999.KDE
 
 tot.2003 <- cbind (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-                   FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile,
-                   Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-                   Gr.12.Gr.9.ratio.KDE)
+                   FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+                   Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 #add census data
 School.Dist.Child.Poverty.Pct  <- sdcp$PCT.CH.POV.5.17.2003
@@ -1276,9 +1283,8 @@ rm (School.Dist.Child.Poverty.Pct, School.Dist.Child.Poverty.Decile)
 #end census data
 
 rm   (District, Year, Tot.Enrollment.saar, Tot.Enrollment.elsi,
-      FRD.Lunch.Pct, FRD.Decile, Child.Poverty.Pct, Poverty.Decile, 
-      Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, Gr.12.Gr.8.ratio.KDE, 
-      Gr.12.Gr.9.ratio.KDE)
+      FRD.Lunch.Pct, FRD.Decile, Gr.8.Cohort.KDE, Gr.9.Cohort.KDE, 
+      Gr.12.Gr.8.ratio.KDE, Gr.12.Gr.9.ratio.KDE)
 
 
 cum.2003.2012 <- rbind (tot.2012, tot.2011, tot.2010, tot.2009, tot.2008, tot.2007,
@@ -1288,7 +1294,7 @@ cum.2003.2012 <- rbind (tot.2012, tot.2011, tot.2010, tot.2009, tot.2008, tot.20
 #Save as R object to load in later script
 cumulative <- paste (wd, "objects", "cum.2003.2012.csv", sep = "/")
 write.table (cum.2003.2012, file = cumulative, sep = ",")
-}
+}     #Cumulative build from data sources
 Build.NAT    <- function (){
 #build national eigth grade cohort per Heckman supplementary material
 wd <- getwd()
@@ -1354,12 +1360,12 @@ names (Nat.Grad.Rate)[2] <- "Gr.8.Cohort.National"
 #write object out
 file <- paste (wd, "objects", "Nat.Gr.8.Cohort.2002.2009.csv", sep = "/")
 write.csv (Nat.Grad.Rate, file = file)
-}
+}     #National 8th Grade Cohort
 Fig.CCD.KDE  <- function (){
 #compare CCD data to KDEdata
 # 4 plots
 wd <- getwd()
-saar <- read.csv (paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/"), 
+saar <- read.csv (paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/"), 
                   sep = ",", header = T, as.is = TRUE)
 elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
                   sep = ",", header = T, as.is = TRUE)
@@ -1393,7 +1399,7 @@ p1
 
 #Compare 9th Grade enrollment from CCD to KDE SAAR Report
 wd <- getwd()
-saar <- read.csv (paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/"), 
+saar <- read.csv (paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/"), 
                   sep = ",", header = T, as.is = TRUE)
 elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
                   sep = ",", header = T, as.is = TRUE)
@@ -1426,11 +1432,12 @@ p1
 wd <- getwd()
 elsi <- read.csv (paste (wd, "objects", "elsi_new.csv", sep = "/" ),
                   sep = ",", header = T, as.is = TRUE)
-gr <- read.csv (paste (wd, "objects", "gr.2003.2007.csv", sep = "/" ),
+gr <- read.csv (paste (wd, "objects", "gr.2002.2006.csv", sep = "/" ),
                 sep = ",", header = T, as.is = T)
-afgr <- read.csv (paste (wd, "objects", "afgr.08.12.csv", sep = "/" ),
+afgr <- read.csv (paste (wd, "objects", "afgr.07.11.csv", sep = "/" ),
                   sep = ",", header = T, as.is = T)
-
+agrc <- read.csv (paste (wd, "objects", "agrc.12.csv", sep = "/"),
+                  sep = ",", header = T, as.is = T)
 
 elsi <- elsi[, c(1,grep ("Diploma.Recipients", names (elsi)))]
 elsi <- elsi [, c(1, 24:2)]
@@ -1439,15 +1446,16 @@ elsi <- elsi[, c(1, 19:24)]
 elsi[, 2:7] <- sapply (elsi [,2:7], as.integer)
 elsi <- colSums (elsi[,2:7], na.rm = T)
 elsi[3] <- trunc((elsi[2] + elsi[4])/2, 0)
-nces <- c(elsi, rep (NA, 4))
+nces <- c(NA, elsi, rep (NA, 4))
+names (nces) <- paste ("Diploma", 2002:2012, sep = ".")
 
-
-afgr <- colSums (afgr[2:6])
+afgr <- colSums (afgr[2:6], na.rm = T)
 gr <- colSums (gr[3:7], na.rm = T)
-kde <- c(gr, afgr)
+agrc <- colSums (agrc[3], na.rm = T)
+kde <- c(gr, afgr, agrc)
 diff <- kde - nces
 
-Year <- 2003:2012
+Year <- 2002:2012
 new <- as.data.frame (cbind (Year, kde, nces, diff))
 #new$Year <- as.Date (as.character (new$Year), "%Y")
 
@@ -1469,7 +1477,7 @@ gr <- read.csv (paste (wd, "objects", "gr.2003.2007.csv", sep = "/" ),
                 sep = ",", header = T, as.is = T)
 afgr <- read.csv (paste (wd, "objects", "afgr.08.12.csv", sep = "/" ),
                   sep = ",", header = T, as.is = T)
-saar <- read.csv (paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/"), 
+saar <- read.csv (paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/"), 
                   sep = ",", header = T, as.is = TRUE)
 
 #kde data
@@ -1771,7 +1779,7 @@ Fig.MISSING   <- function (){
 #diploma recipients
 library (ggplot2)
 wd <- getwd()
-file <- paste (wd, "objects", "SAAR.1999.2012.csv", sep = "/")
+file <- paste (wd, "objects", "SAAR.1999.2013.csv", sep = "/")
 saar <- read.csv (file)
 file <- paste (wd, "data sets", "Grad Rate 2003-2007.csv", sep = "/")
 gr <- read.csv (file)
